@@ -1,0 +1,163 @@
+/* Navbar layout and visuals — uses .nav-ul, .nav-li, .nav-li_a, .nav-sidebar from index.css */
+
+.navbar-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: var(--navbar-bg, #0a0607);
+}
+
+body.theme-light .navbar-header {
+  background-color: var(--navbar-bg);
+}
+
+.navbar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
+.navbar-inner.page-content {
+  max-width: var(--page-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--page-padding-x);
+  padding-right: var(--page-padding-x);
+}
+
+@media (min-width: 640px) {
+  .navbar-inner.page-content {
+    padding-left: var(--page-padding-x-sm);
+    padding-right: var(--page-padding-x-sm);
+  }
+}
+
+.navbar-name {
+  color: rgb(163 163 163);
+  font-weight: 700;
+  font-size: 1.25rem;
+  transition: color 0.2s;
+}
+
+.navbar-name:hover {
+  color: #fff;
+}
+
+body.theme-light .navbar-name {
+  color: #525252;
+}
+
+body.theme-light .navbar-name:hover {
+  color: #0a0a0a;
+}
+
+/* Light theme: nav section links (About, Projects, Contact) — grey so visible on white */
+body.theme-light .nav-li_a {
+  color: #525252;
+}
+body.theme-light .nav-li_a:hover,
+body.theme-light .nav-li_a:focus {
+  color: #0a0a0a;
+}
+
+.navbar-toggle {
+  color: rgb(163 163 163);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: none;
+}
+
+.navbar-toggle:hover {
+  color: #fff;
+}
+
+body.theme-light .navbar-toggle:hover {
+  color: #0a0a0a;
+}
+
+.navbar-toggle:focus {
+  outline: none;
+}
+
+@media (max-width: 639px) {
+  .navbar-toggle {
+    display: flex;
+  }
+}
+
+.navbar-toggle-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.navbar-desktop {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .navbar-desktop {
+    display: flex;
+  }
+}
+
+.navbar-sidebar-open {
+  max-height: 100vh;
+}
+
+.navbar-sidebar-closed {
+  max-height: 0;
+}
+
+.navbar-sidebar-inner {
+  padding: 1.25rem;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  color: rgb(163 163 163);
+  background: transparent;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.navbar-theme-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-light .navbar-theme-btn {
+  color: #525252;
+}
+
+body.theme-light .navbar-theme-btn:hover {
+  color: #0a0a0a;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.navbar-theme-btn:focus {
+  outline: none;
+}
+
+.navbar-theme-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}

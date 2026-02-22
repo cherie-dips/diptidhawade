@@ -1,0 +1,98 @@
+/**
+ * Global layout & theme — aligned with navbar (Dipti Dhawade left padding, Contact right padding).
+ * Use .page-content on section content for consistent horizontal alignment.
+ */
+
+:root {
+  /* Layout: match navbar c-space (px-5 / sm:px-8) */
+  --page-padding-x: 1.25rem;   /* 20px, mobile */
+  --page-padding-x-sm: 2rem;   /* 32px, 640px+ */
+  --page-max-width: 80rem;     /* 1280px = max-w-7xl */
+
+  /* Color theme — very light pink tint (black mode) */
+  --color-bg: #0d0809;
+  --color-bg-elevated: #140f11;
+  --color-bg-card: #1c181a;
+  --navbar-bg: #0a0607;
+  --color-border: #1C1C21;
+  --color-border-muted: #3A3A49;
+  --color-text: #E4E4E6;
+  --color-text-muted: #AFB0B6;
+  --color-text-dim: #62646C;
+  --color-accent: #fff;
+}
+
+/* Light theme (switch background) — very light pink tint */
+body.theme-light {
+  --color-bg: #fdf8f9;
+  --color-bg-elevated: #f8f2f3;
+  --color-bg-card: #efe8e9;
+  --navbar-bg: #fefafb;
+  --color-border: #e5e5e5;
+  --color-border-muted: #a3a3a3;
+  --color-text: #171717;
+  --color-text-muted: #525252;
+  --color-text-dim: #737373;
+  --color-accent: #0a0a0a;
+}
+
+body.theme-light {
+  background: var(--color-bg);
+}
+
+/* Content container: same horizontal bounds as navbar content */
+.page-content {
+  max-width: var(--page-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--page-padding-x);
+  padding-right: var(--page-padding-x);
+}
+
+@media (min-width: 640px) {
+  .page-content {
+    padding-left: var(--page-padding-x-sm);
+    padding-right: var(--page-padding-x-sm);
+  }
+}
+
+/* Contact + Travel Globe side by side — shifted right to center, space below */
+.contact-globe-row {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  margin-left: 14%;
+  padding-bottom: 2rem;
+}
+
+.contact-globe-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-globe-col:first-child {
+  flex: 0 1 auto;
+  min-width: min(100%, 22rem);
+}
+
+/* Right column: align globe with contact (same top), same top padding as contact */
+.contact-globe-col#my-journey,
+.contact-globe-col:last-child {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 5rem;
+  padding-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .contact-globe-row {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .contact-globe-col:first-child {
+    min-width: 0;
+  }
+}

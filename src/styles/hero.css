@@ -1,0 +1,202 @@
+/* Hero: text left, image right, tech logos below text (no float) */
+
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 5rem;
+  padding-bottom: 0rem;
+  background: var(--color-bg);
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 3rem;
+  width: 100%;
+}
+
+.hero-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.hero-description {
+  font-size: clamp(0.9375rem, 1.5vw, 1rem);
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin: 0.5rem 0 0 0;
+  max-width: 32rem;
+}
+
+.hero-inline-link {
+  color: inherit;
+  text-decoration: none !important;
+  border-bottom: 1px solid currentColor;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.hero-inline-link:hover,
+.hero-inline-link:focus {
+  color: var(--color-text);
+  border-bottom-color: var(--color-text);
+  text-decoration: none !important;
+}
+
+body.theme-light .hero-inline-link:hover {
+  color: #0a0a0a;
+  border-bottom-color: #0a0a0a;
+}
+
+.hero-tech-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.hero-tech-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.hero-tech-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}
+
+.hero-tech-icon {
+  font-size: 1.5rem;
+}
+
+.hero-image-col {
+  flex-shrink: 0;
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: 8px;
+}
+
+.hero-cv-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+/* CV box — same style as Contact links (LinkedIn, GitHub): no underline */
+.hero-cv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.hero-cv-link:hover,
+.hero-cv-link:focus {
+  color: #fff;
+  border-color: var(--color-border-muted);
+  text-decoration: none;
+}
+
+.hero-cv-link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+}
+
+.hero-cv-link:hover .hero-cv-link-icon,
+.hero-cv-link:focus .hero-cv-link-icon {
+  color: var(--color-text);
+}
+
+.hero-cv-link-label {
+  font-weight: 500;
+}
+
+/* Light theme: CV link — grey so visible on white */
+body.theme-light .hero-cv-link {
+  color: #525252;
+}
+body.theme-light .hero-cv-link:hover,
+body.theme-light .hero-cv-link:focus {
+  color: #0a0a0a;
+  border-color: var(--color-border-muted);
+}
+body.theme-light .hero-cv-link-icon {
+  color: #737373;
+}
+body.theme-light .hero-cv-link:hover .hero-cv-link-icon,
+body.theme-light .hero-cv-link:focus .hero-cv-link-icon {
+  color: #0a0a0a;
+}
+
+@media (max-width: 768px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-text-col {
+    align-items: center;
+  }
+
+  .hero-description {
+    text-align: center;
+  }
+
+  .hero-tech-logos {
+    justify-content: center;
+  }
+
+  .hero-image-col {
+    order: -1;
+    justify-self: center;
+  }
+
+  .hero-image {
+    max-width: 240px;
+  }
+}

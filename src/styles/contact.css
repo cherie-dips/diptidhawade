@@ -1,0 +1,99 @@
+/* Contact page — minimalist, left-aligned with navbar (Dipti) */
+
+.contact-page {
+  padding-top: 8rem;
+  padding-bottom: 4rem;
+}
+
+.contact-inner {
+  text-align: left;
+}
+
+.contact-title {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.contact-intro {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  max-width: 32rem;
+  margin-bottom: 2rem;
+}
+
+.contact-block {
+  margin-bottom: 2rem;
+}
+
+.contact-block:last-child {
+  margin-bottom: 0;
+}
+
+.contact-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-dim);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem 1.5rem;
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.contact-link:hover {
+  color: #fff;
+  border-color: var(--color-border-muted);
+}
+
+.contact-link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+}
+
+.contact-link:hover .contact-link-icon {
+  color: var(--color-text);
+}
+
+.contact-link-label {
+  font-weight: 500;
+}
+
+/* Light theme: email, LinkedIn, GitHub links — grey so visible on white */
+body.theme-light .contact-link {
+  color: #525252;
+}
+body.theme-light .contact-link:hover {
+  color: #0a0a0a;
+  border-color: var(--color-border-muted);
+}
+body.theme-light .contact-link-icon {
+  color: #737373;
+}
+body.theme-light .contact-link:hover .contact-link-icon {
+  color: #0a0a0a;
+}
