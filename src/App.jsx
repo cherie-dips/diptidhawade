@@ -5,6 +5,9 @@ import Hero from "./sections/Hero.jsx";
 import TravelGlobe from "./sections/Travelglobe.jsx";
 import Projects from "./sections/Projects.jsx";
 import Contact from "./sections/Contact.jsx";
+import NotesList from "./pages/NotesList.jsx";
+import NotesCategory from "./pages/NotesCategory.jsx";
+import NotesSubject from "./pages/NotesSubject.jsx";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -134,6 +137,9 @@ const App = () => {
       <main className="w-full min-w-0">
         <Routes>
           <Route path="/" element={<HomeScrollPage />} />
+          <Route path="/notes" element={<NotesList />} />
+          <Route path="/notes/:categoryId" element={<NotesCategory />} />
+          <Route path="/notes/:categoryId/:subjectId" element={<NotesSubject />} />
         </Routes>
       </main>
     </Router>

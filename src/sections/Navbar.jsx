@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { navLinks } from "../constants/index.js";
 import "../styles/navbar.css";
@@ -11,36 +12,50 @@ const scrollToHero = () => {
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
-const NavItems = ({ onNavigate }) => (
-  <ul className="nav-ul">
-    {navLinks.map(({ id, hash, name }) => (
-      <li key={id} className="nav-li">
-        {hash === "hero" ? (
-          <a
-            href={BASE}
-            className="nav-li_a"
-            onClick={(e) => {
-              e.preventDefault();
-              window.history.replaceState(null, "", BASE);
-              scrollToHero();
-              onNavigate?.();
-            }}
-          >
-            {name}
-          </a>
-        ) : (
-          <a
-            href={`${BASE}#${hash}`}
-            className="nav-li_a"
-            onClick={onNavigate}
-          >
-            {name}
-          </a>
-        )}
-      </li>
-    ))}
-  </ul>
-);
+const NavItems = ({ onNavigate }) => {
+  const location = useLocation();
+  const basePath = BASE.replace(/\/$/, "");
+  const isNotesPage = location.pathname === basePath + "/notes" || location.pathname.startsWith(basePath + "/notes/");
+
+  return (
+    <ul className="nav-ul">
+      {navLinks.map(({ id, hash, name, path }) => (
+        <li key={id} className="nav-li">
+          {path ? (
+            <Link
+              to={path}
+              className={`nav-li_a ${path === "/notes" && isNotesPage ? "nav-li_a-active" : ""}`}
+              onClick={onNavigate}
+            >
+              {name}
+            </Link>
+          ) : hash === "hero" ? (
+            <a
+              href={BASE}
+              className="nav-li_a"
+              onClick={(e) => {
+                e.preventDefault();
+                window.history.replaceState(null, "", BASE);
+                scrollToHero();
+                onNavigate?.();
+              }}
+            >
+              {name}
+            </a>
+          ) : (
+            <a
+              href={`${BASE}#${hash}`}
+              className="nav-li_a"
+              onClick={onNavigate}
+            >
+              {name}
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
