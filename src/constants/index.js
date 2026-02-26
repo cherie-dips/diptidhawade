@@ -14,7 +14,15 @@ export const heroContent = {
   title: 'Dipti Dhawade',
   tagline: 'Computer Science & Artificial Intelligence | Plaksha University',
   description:
-    'I build intelligent systems and real-world AI applications at the intersection of machine learning, computer vision, and robotics. Currently pursuing my BTech in Computer Science and Artificial Intelligence at Plaksha University, I have worked on projects ranging from autonomous underwater vehicles to lightweight text segmentation models. Beyond code, I am passionate about community impact — from empowering rural communities as a UN Millennium Fellow to promoting gender equity in STEM.',
+    'I am a third year student pursuing my BTech in Computer Science and Artificial Intelligence at Plaksha University, I have worked on projects ranging from autonomous underwater vehicles to lightweight text segmentation models. Beyond code, I am passionate about community impact.',
+  accomplishments: [
+    'Millennium Fellow - Millennium Campus Network × United Nations, 2024',
+    'GWiST Member - DS Brar Centre for Girls & Women in STEM, Plaksha University',
+    'OxNet Scholar - Pembroke College, Oxford University, 2020',
+    'Young Scholars Program - Ashoka University, 2020',
+    'Vice Head Girl - Jawahar Navodaya Vidyalaya Ahmednagar',
+    'Taekwondo National Inter-School Sports Competitor - Represented my school against 600+ schools',
+  ],
 };
 
 export const plakshaUniversityUrl = 'https://www.plaksha.edu.in';
@@ -204,10 +212,17 @@ export const cities = [
   },
 ];
 
-// ─── Notes: two sections only — Class Notes (OneNote link), Past Papers (Google Drive link) ───
-export const FOLDER_TYPES = ["Class Notes", "Past Papers"];
-export const FOLDER_SLUGS = { "Class Notes": "class-notes", "Past Papers": "past-papers" };
-export const SLUG_TO_FOLDER = Object.fromEntries(Object.entries(FOLDER_SLUGS).map(([k, v]) => [v, k]));
+// ─── Notes: four sections — PDFs from Supabase only, viewed in-app ───
+export const FOLDER_TYPES = ["Class Notes", "Tutorials/Assignments", "Exam Practice", "Past Papers"];
+export const FOLDER_SLUGS = {
+  "Class Notes": "class-notes",
+  "Tutorials/Assignments": "tutorials-assignments",
+  "Exam Practice": "exam-practice",
+  "Past Papers": "past-papers",
+};
+export const SLUG_TO_FOLDER = Object.fromEntries(
+  Object.entries(FOLDER_SLUGS).map(([name, slug]) => [slug, name])
+);
 
 export const notesCategories = [
   {
@@ -220,82 +235,52 @@ export const notesCategories = [
       {
         id: "machine-learning",
         name: "Machine Learning",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgCWt6n8sULWRaEETbmeeCMLAR8n1w9ntSyQbu6C5bsu9vY?e=D9Eks7" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "deep-learning",
         name: "Deep Learning",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgBuoSHpbtA2Rpf230uPGCg1AUpbkaaK2OAtd31Sy_Gg45M?e=iPnHEm" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "design-analysis-algorithms",
         name: "Design and Analysis of Algorithms",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgD4M9maiRfyT4aPCglNgp_IAYrsrdMuI9dLU_b6J4tuEeo?e=ggq5QR" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "theory-of-computation",
         name: "Theory of Computation",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgCWGagtwNZeRbs5b2LG1UKCASSL6hZJ7FgTPI4T18hSJ2Q?e=yx23UG" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "foundations-computer-systems",
         name: "Foundations of Computer Systems",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgBtvEksY2HaSI5T6ugcjGsBAemIAxVdzmuYsWY3bC-_17s?e=QoBaLj" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "computer-networks",
         name: "Computer Networks",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgAjiEd6BC1tSpBBxLq3mqOtAW8prLWRq3W0Qvk8k0U1DBM?e=HVFd8f" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "discrete-maths",
         name: "Discrete Maths",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgAcXyVq1F2MT45eri3ZF2rBAWqgwO4JWYhheKct1wKvZD4?e=EFAidu" }],
-          "Past Papers": [{ title: "Open Past Papers folder (Google Drive)", link: "https://drive.google.com/drive/folders/1rsOg0m6Z-oPXP4rfQ6WkW6rs_QFjAYQk?usp=sharing" }],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "operating-systems",
         name: "Operating Systems",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgBWo0peOPmeTLOzJttgdVGtATxlM18JnW9Pq_ynpuaFedg?e=Uqgxs4" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "database-management-systems",
         name: "Database Management Systems",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgAy4-8fjOcKQL7UQaj6TUp7AchXCLncosHSQHyJyHzzicU?e=uRB5xM" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "Reinforcement Learning",
         name: "Reinforcement Learning",
-        folders: {
-          "Class Notes": [{ title: "Open notes", link: "https://plakshauniversity1-my.sharepoint.com/:o:/g/personal/dipti_dhawade_ug23_plaksha_edu_in/IgB_2xUod09lSIZKbYb1ik08ARldexU9UdGBn5lOSge6W6c?e=Em6TgT" }],
-          "Past Papers": [],
-        },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       }
     ],
   },
@@ -309,22 +294,22 @@ export const notesCategories = [
       {
         id: "react-js",
         name: "React.js",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "mern-stack",
         name: "MERN Stack",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "javascript",
         name: "JavaScript",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "system-design",
         name: "System Design",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
     ],
   },
@@ -338,32 +323,32 @@ export const notesCategories = [
       {
         id: "c-programming",
         name: "C Programming",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "mathematics",
         name: "Mathematics",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "dsa",
         name: "DSA",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "computer-organization",
         name: "Computer Organization",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "operating-systems",
         name: "Operating Systems",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
         id: "databases",
         name: "Databases",
-        folders: { "Class Notes": [], "Past Papers": [] },
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
     ],
   },

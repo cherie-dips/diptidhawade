@@ -4,7 +4,7 @@
  */
 
 :root {
-  /* Layout: match navbar c-space (px-5 / sm:px-8) */
+  /* Layout: same horizontal padding as navbar (px-5 / sm:px-8) */
   --page-padding-x: 1.25rem;   /* 20px, mobile */
   --page-padding-x-sm: 2rem;   /* 32px, 640px+ */
   --page-max-width: 80rem;     /* 1280px = max-w-7xl */

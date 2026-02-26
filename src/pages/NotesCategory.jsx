@@ -1,11 +1,12 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { notesCategories } from "../constants/index.js";
+import { useNotes } from "../hooks/useNotes.js";
 import "../styles/notes.css";
 
 export default function NotesCategory() {
   const { categoryId } = useParams();
   const navigate = useNavigate();
-  const category = notesCategories.find((c) => c.id === categoryId);
+  const { categories } = useNotes();
+  const category = categories.find((c) => c.id === categoryId);
 
   if (!category) {
     return (

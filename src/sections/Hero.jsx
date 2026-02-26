@@ -30,7 +30,7 @@ const techLogos = [
 
 const Hero = () => {
   return (
-    <section id="cv" className="hero-section">
+    <section className="hero-section">
       <div className="page-content hero-inner">
         <div className="hero-text-col">
           <h1 className="hero-title">{heroContent.title}</h1>
@@ -68,6 +68,15 @@ const Hero = () => {
               )
             )}
           </p>
+          {heroContent.accomplishments && heroContent.accomplishments.length > 0 && (
+            <ul className="hero-accomplishments-list">
+              {heroContent.accomplishments.map((item, i) => (
+                <li key={i} className="hero-accomplishments-item">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="hero-tech-logos">
             {techLogos.map(({ name, Icon, color }) => (
               <div

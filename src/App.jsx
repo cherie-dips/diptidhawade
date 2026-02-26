@@ -8,6 +8,7 @@ import Contact from "./sections/Contact.jsx";
 import NotesList from "./pages/NotesList.jsx";
 import NotesCategory from "./pages/NotesCategory.jsx";
 import NotesSubject from "./pages/NotesSubject.jsx";
+import NotesSection from "./pages/NotesSection.jsx";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -140,6 +141,7 @@ const App = () => {
           <Route path="/notes" element={<NotesList />} />
           <Route path="/notes/:categoryId" element={<NotesCategory />} />
           <Route path="/notes/:categoryId/:subjectId" element={<NotesSubject />} />
+          <Route path="/notes/:categoryId/:subjectId/:folderSlug" element={<NotesSection />} />
         </Routes>
       </main>
     </Router>

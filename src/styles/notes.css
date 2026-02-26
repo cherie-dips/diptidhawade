@@ -276,7 +276,7 @@ body.theme-light .notes-category-image {
   text-decoration: none !important;
 }
 
-/* Folders (Class Notes, Past Papers) */
+/* Folders (Class Notes, Tutorials/Assignments, Exam Practice, Past Papers) */
 .notes-folders {
   display: grid;
   gap: 1.5rem;
@@ -297,6 +297,23 @@ body.theme-light .notes-category-image {
   margin: 0 0 0.75rem 0;
 }
 
+.notes-folder-title-link {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.notes-folder-title-link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.notes-section-page-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 1rem 0;
+}
+
 .notes-empty {
   color: var(--color-text-dim);
   font-size: 0.875rem;
@@ -307,6 +324,33 @@ body.theme-light .notes-category-image {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+/* Section page: PDF list side by side like subject names */
+.notes-pdf-list-section-page {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem 2rem;
+  margin-top: 1rem;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .notes-pdf-list-section-page {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 639px) {
+  .notes-pdf-list-section-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+.notes-pdf-list-section-page .notes-pdf-link,
+.notes-pdf-list-section-page .notes-pdf-link-external {
+  display: block;
+  width: 100%;
 }
 
 .notes-pdf-list li {
@@ -342,67 +386,6 @@ body.theme-light .notes-category-image {
 .notes-pdf-link-external:hover {
   color: var(--color-accent) !important;
   text-decoration: none !important;
-}
-
-/* PDF viewer modal — view only */
-.notes-pdf-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.notes-pdf-modal {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  width: 100%;
-  max-width: 900px;
-  height: 90vh;
-  max-height: 800px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.notes-pdf-header {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg-elevated);
-}
-
-.notes-pdf-view-only {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-}
-
-.notes-pdf-close {
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 0.25rem;
-  line-height: 1;
-}
-
-.notes-pdf-close:hover {
-  color: var(--color-text);
-}
-
-.notes-pdf-iframe {
-  flex: 1;
-  width: 100%;
-  border: none;
-  background: #fff;
 }
 
 /* Nav active state for Notes */

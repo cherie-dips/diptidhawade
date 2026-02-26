@@ -1,16 +1,23 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { notesCategories, FOLDER_TYPES } from "../constants/index.js";
-import { assetUrl, getGoogleDrivePreviewUrl } from "../utils/assetUrl.js";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { FOLDER_TYPES, FOLDER_SLUGS } from "../constants/index.js";
+import { useNotes } from "../hooks/useNotes.js";
+import { useSubjectFiles } from "../hooks/useSubjectFiles.js";
+import { hasConfig } from "../supabase.js";
 import "../styles/notes.css";
 
 export default function NotesSubject() {
   const { categoryId, subjectId } = useParams();
   const navigate = useNavigate();
-  const [viewingPdf, setViewingPdf] = useState(null);
+  const { categories } = useNotes();
+  const { folders: storageFolders, error: filesError } = useSubjectFiles(categoryId, subjectId);
 
-  const category = notesCategories.find((c) => c.id === categoryId);
+  const category = categories.find((c) => c.id === categoryId);
   const subject = category?.subjects.find((s) => s.id === subjectId);
+
+  // Always show the 4 folder sections; use Storage data when available, else empty
+  const folders = hasConfig
+    ? { ...Object.fromEntries(FOLDER_TYPES.map((name) => [name, []])), ...storageFolders }
+    : (subject?.folders || Object.fromEntries(FOLDER_TYPES.map((name) => [name, []])));
 
   if (!category || !subject) {
     return (
@@ -23,16 +30,6 @@ export default function NotesSubject() {
     );
   }
 
-  const openPdf = (path) => setViewingPdf(path);
-  const openViewer = (pathOrUrl) => {
-    const drivePreview = getGoogleDrivePreviewUrl(pathOrUrl);
-    setViewingPdf(drivePreview || pathOrUrl);
-  };
-  const closePdf = () => setViewingPdf(null);
-
-  const isExternalLink = (item) => !!item.link;
-  const isGoogleDriveLink = (url) => !!getGoogleDrivePreviewUrl(url);
-
   return (
     <div className="notes-page page-content">
       <button
@@ -44,80 +41,24 @@ export default function NotesSubject() {
       </button>
       <h1 className="notes-title">{subject.name}</h1>
 
-      <p className="notes-folder-intro">Class Notes, Past Papers</p>
+      <p className="notes-folder-intro">Class Notes, Tutorials/Assignments, Exam Practice, Past Papers</p>
       <div className="notes-folders">
         {FOLDER_TYPES.map((folderName) => {
-          const pdfs = subject.folders[folderName] || [];
+          const pdfs = folders[folderName] || [];
+          const folderSlug = FOLDER_SLUGS[folderName];
           return (
             <section key={folderName} className="notes-folder-section">
-              <h2 className="notes-folder-title">{folderName}</h2>
-              {pdfs.length === 0 ? (
-                <p className="notes-empty">No notes yet.</p>
-              ) : (
-                <ul className="notes-pdf-list">
-                  {pdfs.map((item, i) => (
-                    <li key={i}>
-                      {isExternalLink(item) ? (
-                        isGoogleDriveLink(item.link) ? (
-                          <button
-                            type="button"
-                            className="notes-pdf-link notes-pdf-link-external"
-                            onClick={() => openViewer(item.link)}
-                          >
-                            {item.title} ↗
-                          </button>
-                        ) : (
-                          <a
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="notes-pdf-link notes-pdf-link-external"
-                          >
-                            {item.title} ↗
-                          </a>
-                        )
-                      ) : (
-                        <button
-                          type="button"
-                          className="notes-pdf-link"
-                          onClick={() => openPdf(item.path)}
-                        >
-                          {item.title}
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+              <h2 className="notes-folder-title">
+                <Link to={`/notes/${categoryId}/${subjectId}/${folderSlug}`} className="notes-folder-title-link">
+                  {folderName}
+                </Link>
+              </h2>
+              {pdfs.length === 0 && (
+                <p className="notes-empty">{hasConfig && filesError ? "Could not load notes." : "No notes yet."}</p>
               )}
             </section>
           );
         })}
-      </div>
-
-      {viewingPdf && (
-        <PdfViewerModal src={viewingPdf} onClose={() => setViewingPdf(null)} />
-      )}
-    </div>
-  );
-}
-
-function PdfViewerModal({ src, onClose }) {
-  const isExternalUrl = src.startsWith("http");
-  const iframeSrc = isExternalUrl ? src : assetUrl(src) + "#toolbar=0";
-  return (
-    <div className="notes-pdf-overlay" onClick={onClose} onContextMenu={(e) => e.preventDefault()} role="dialog" aria-modal="true">
-      <div className="notes-pdf-modal" onClick={(e) => e.stopPropagation()} onContextMenu={(e) => e.stopPropagation()}>
-        <div className="notes-pdf-header">
-          <span className="notes-pdf-view-only">View only — do not download or distribute</span>
-          <button type="button" className="notes-pdf-close" onClick={onClose} aria-label="Close">
-            ✕
-          </button>
-        </div>
-        <iframe
-          title="PDF viewer"
-          src={iframeSrc}
-          className="notes-pdf-iframe"
-        />
       </div>
     </div>
   );

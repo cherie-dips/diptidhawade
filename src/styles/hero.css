@@ -44,7 +44,32 @@
   line-height: 1.6;
   color: var(--color-text-muted);
   margin: 0.5rem 0 0 0;
-  max-width: 32rem;
+  max-width: 48rem;
+}
+
+/* Accomplishments list — single column, same style as notes subject list */
+.hero-accomplishments-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0 0;
+  max-width: 48rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem 0;
+}
+
+.hero-accomplishments-item {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-text);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  letter-spacing: 0.02em;
+}
+
+body.theme-light .hero-accomplishments-item {
+  color: #374151;
 }
 
 .hero-inline-link {

@@ -16,6 +16,7 @@ const NavItems = ({ onNavigate }) => {
   const location = useLocation();
   const basePath = BASE.replace(/\/$/, "");
   const isNotesPage = location.pathname === basePath + "/notes" || location.pathname.startsWith(basePath + "/notes/");
+  const isRoot = location.pathname === basePath || location.pathname === basePath + "/";
 
   return (
     <ul className="nav-ul">
@@ -30,18 +31,19 @@ const NavItems = ({ onNavigate }) => {
               {name}
             </Link>
           ) : hash === "hero" ? (
-            <a
-              href={BASE}
+            <Link
+              to="/"
               className="nav-li_a"
               onClick={(e) => {
-                e.preventDefault();
-                window.history.replaceState(null, "", BASE);
-                scrollToHero();
+                if (isRoot) {
+                  e.preventDefault();
+                  scrollToHero();
+                }
                 onNavigate?.();
               }}
             >
               {name}
-            </a>
+            </Link>
           ) : (
             <a
               href={`${BASE}#${hash}`}
