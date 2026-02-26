@@ -69,8 +69,13 @@ body.theme-light .nav-li_a:focus {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 0.5rem;
   display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .navbar-toggle:hover {
@@ -94,6 +99,7 @@ body.theme-light .navbar-toggle:hover {
 .navbar-toggle-icon {
   width: 1.5rem;
   height: 1.5rem;
+  flex-shrink: 0;
 }
 
 .navbar-desktop {
@@ -108,10 +114,26 @@ body.theme-light .navbar-toggle:hover {
 
 .navbar-sidebar-open {
   max-height: 100vh;
+  visibility: visible;
 }
 
 .navbar-sidebar-closed {
   max-height: 0;
+  visibility: hidden;
+}
+
+/* Sidebar: below the header bar, full width, above page content */
+.navbar-header .nav-sidebar {
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--navbar-bg, #0a0607);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-light .navbar-header .nav-sidebar {
+  background-color: var(--navbar-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .navbar-sidebar-inner {

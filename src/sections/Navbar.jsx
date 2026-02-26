@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaSun, FaMoon } from "react-icons/fa";
+import { FaSun, FaMoon, FaBars, FaTimes } from "react-icons/fa";
 import { navLinks } from "../constants/index.js";
 import "../styles/navbar.css";
 
@@ -108,13 +108,13 @@ const Navbar = () => {
           type="button"
           onClick={toggleMenu}
           className="navbar-toggle"
-          aria-label="Toggle menu"
+          aria-label={isOpen ? "Close menu" : "Open menu"}
         >
-          <img
-            src={isOpen ? `${BASE}assets/close.svg` : `${BASE}assets/menu.svg`}
-            alt=""
-            className="navbar-toggle-icon"
-          />
+          {isOpen ? (
+            <FaTimes className="navbar-toggle-icon" aria-hidden />
+          ) : (
+            <FaBars className="navbar-toggle-icon" aria-hidden />
+          )}
         </button>
         <div className="navbar-actions">
           <nav className="navbar-desktop">
