@@ -18,12 +18,6 @@
   margin-bottom: 0.5rem;
 }
 
-.projects-subtitle {
-  font-size: 1rem;
-  color: var(--color-text-dim);
-  margin-bottom: 2.5rem;
-}
-
 .projects-item {
   display: flex;
   flex-direction: row;

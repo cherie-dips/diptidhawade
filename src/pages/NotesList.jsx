@@ -24,10 +24,10 @@ export default function NotesList() {
               </div>
               <span className="notes-category-title">{cat.title}</span>
               <div className="notes-category-tags">
-                {(cat.subjectLabels || cat.subjects.map((s) => s.name)).slice(0, 5).map((label) => (
+                {(cat.subjectLabels || cat.subjects.map((s) => s.name)).slice(0, 3).map((label) => (
                   <span key={label} className="notes-category-tag">{label}</span>
                 ))}
-                {(cat.subjectLabels || cat.subjects.map((s) => s.name)).length > 5 && (
+                {(cat.subjectLabels || cat.subjects.map((s) => s.name)).length > 3 && (
                   <span className="notes-category-tag notes-category-tag-more">+ more</span>
                 )}
               </div>
@@ -55,10 +55,10 @@ export default function NotesList() {
               </div>
               <span className="notes-category-title">{cat.title}</span>
               <div className="notes-category-tags">
-                {(cat.subjectLabels || cat.subjects.map((s) => s.name)).slice(0, 5).map((label) => (
+                {(cat.subjectLabels || cat.subjects.map((s) => s.name)).slice(0, 3).map((label) => (
                   <span key={label} className="notes-category-tag">{label}</span>
                 ))}
-                {(cat.subjectLabels || cat.subjects.map((s) => s.name)).length > 5 && (
+                {(cat.subjectLabels || cat.subjects.map((s) => s.name)).length > 3 && (
                   <span className="notes-category-tag notes-category-tag-more">+ more</span>
                 )}
               </div>

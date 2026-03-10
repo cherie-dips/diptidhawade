@@ -53,9 +53,6 @@ export default function NotesSubject() {
                   {folderName}
                 </Link>
               </h2>
-              {pdfs.length === 0 && (
-                <p className="notes-empty">{hasConfig && filesError ? "Could not load notes." : "No notes yet."}</p>
-              )}
             </section>
           );
         })}
