@@ -393,6 +393,48 @@ body.theme-light .notes-category-image {
   }
 }
 
+@media (max-width: 768px) {
+  .notes-section-layout-wrap {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 5.25rem);
+    overflow: auto;
+  }
+
+  .notes-section-left-col {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    flex-shrink: 0;
+    overflow: visible;
+  }
+
+  .notes-section-left-col .notes-toggle-list-btn {
+    margin-bottom: 0;
+  }
+
+  .notes-section-page-heading {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .notes-section-sidebar {
+    width: 100%;
+    max-height: 30vh;
+    overflow-y: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+  }
+
+  .notes-section-viewer {
+    flex: 1;
+    min-height: 60vh;
+    height: auto;
+  }
+}
+
 .notes-pdf-list-sidebar {
   display: flex;
   flex-direction: column;

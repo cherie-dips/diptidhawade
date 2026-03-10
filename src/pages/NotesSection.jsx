@@ -111,7 +111,7 @@ export default function NotesSection() {
             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
               <Viewer
                 fileUrl={activeItem.url}
-                defaultScale={SpecialZoomLevel.ActualSize}
+                defaultScale={SpecialZoomLevel.PageWidth}
                 theme="dark"
                 plugins={[defaultLayoutPluginInstance]}
               />
