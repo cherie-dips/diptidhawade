@@ -516,7 +516,7 @@ body.theme-light .notes-category-image {
   overflow: visible !important;
 }
 
-/* Hide Download, Print, Theme, and Search buttons from the default toolbar */
+/* Hide Download, Print, Theme, and Search buttons from toolbar and popover menu */
 .notes-section-viewer [data-testid="get-file__download-button"],
 .notes-section-viewer [data-testid="print__button"],
 .notes-section-viewer [data-testid="search__popover-button"],
@@ -524,7 +524,10 @@ body.theme-light .notes-category-image {
 .notes-section-viewer [aria-label="Print"],
 .notes-section-viewer [aria-label="Search"],
 .notes-section-viewer [aria-label*="witch theme"],
-.notes-section-viewer [aria-label*="witch to"] {
+.notes-section-viewer [aria-label*="witch to"],
+[data-testid="get-file__download-menu"],
+[data-testid="print__menu"],
+[data-testid="open__menu"] {
   display: none !important;
 }
 
