@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { myProjects } from "../constants/index.js";
 import { assetUrl } from "../utils/assetUrl.js";
+import { getYoutubeEmbedSrc } from "../utils/youtubeEmbed.js";
 import "../styles/projects.css";
 
 export default function Projects() {
@@ -25,7 +26,10 @@ export default function Projects() {
       <div className="projects-inner">
         <h1 className="projects-title">Projects</h1>
 
-        {myProjects.map((project, i) => (
+        {myProjects.map((project, i) => {
+          const youtubeEmbed =
+            !project.texture && getYoutubeEmbedSrc(project.spotlight);
+          return (
           <div key={i} className="projects-item">
             <div className="projects-item-media-card">
               {project.texture ? (
@@ -38,6 +42,16 @@ export default function Projects() {
                   playsInline
                   preload="metadata"
                 />
+              ) : youtubeEmbed ? (
+                <div className="projects-youtube-wrap">
+                  <iframe
+                    className="projects-youtube-iframe"
+                    src={youtubeEmbed}
+                    title={`${project.title} — project video`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
               ) : (
                 <button
                   type="button"
@@ -82,7 +96,8 @@ export default function Projects() {
               </a>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {expandedImage && (

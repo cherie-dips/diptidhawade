@@ -14,14 +14,20 @@ export const heroContent = {
   title: 'Dipti Dhawade',
   tagline: 'Computer Science & Artificial Intelligence | Plaksha University',
   description:
-    'I am a third year student pursuing my BTech in Computer Science and Artificial Intelligence at Plaksha University, I have worked on projects ranging from autonomous underwater vehicles to lightweight text segmentation models. Beyond code, I am passionate about community impact.',
+    'I’m a 3rd-year CS & AI student at Plaksha University, obsessed with low-level systems and high-speed deployments. \
+    I’m currently building a chatbot that integrates with any website in under five minutes — because why wait for good tech? \
+    I’m the person who actually enjoys Discrete Mathematics and Cryptography. \
+    I’m a C/C++ loyalist currently venturing into the world of Rust to build a sleek Terminal UI. \
+    From engineering Autonomous Underwater Vehicles to training lightweight text models, I’ve touched almost every layer of the stack. \
+    My goal? Writing code that doesn\'t just run fast, but actually makes a dent in the community.',
+
   accomplishments: [
     'Millennium Fellow - Millennium Campus Network × United Nations, 2024',
     'GWiST Member - DS Brar Centre for Girls & Women in STEM, Plaksha University',
     'OxNet Scholar - Pembroke College, Oxford University, 2020',
     'Young Scholars Program - Ashoka University, 2020',
     'Vice Head Girl - Jawahar Navodaya Vidyalaya Ahmednagar',
-    'Taekwondo National Inter-School Sports Competitor - Represented my school against 600+ schools',
+    'Taekwondo National Inter-School Sports Competitor - Competed among 600+ schools',
   ],
 };
 
@@ -366,12 +372,12 @@ export const contact = {
 
 export const myProjects = [
   {
-    title: 'GWiST Groq Chatbot — API Workshop Demo',
-    desc: 'A minimal yet functional React chatbot built using the Groq API, developed as part of a technical workshop organized by the DS Brar Centre for Girls and Women in STEM (GWiST) at Plaksha University.',
+    title: 'NavBot — Chatbot for Any Website',
+    desc: 'NavBot is an AI chatbot-as-a-service. Any website owner can add a smart Q&A chatbot to their site in under 5 minutes, no ML knowledge, no backend changes.',
     subdesc:
-      'Designed to introduce participants to LLM-powered application development, the app demonstrates real-time AI chat interaction using Groq\'s inference API — built with React, Vite, and JavaScript, keeping the setup lightweight and beginner-friendly for workshop attendees.',
-    href: 'https://github.com/cherie-dips/gwist-techWorkshop',
-    spotlight: '/assets/projects/gwist-chatbot.png',
+      'NavBot crawls your website, indexes the content into a vector database, and gives you a chatbot that answers only from your site\'s content with source links.',
+    href: 'https://github.com/cherie-dips/NavBot',
+    spotlight: 'https://www.youtube.com/watch?v=dQ3EHuyKFAg',
     tags: [
       {
         id: 1,
@@ -380,21 +386,22 @@ export const myProjects = [
       },
       {
         id: 2,
-        name: 'JavaScript',
+        name: 'ChromaDB',
         path: 'assets/tailwindcss.png',
       },
       {
         id: 3,
-        name: 'Groq API',
+        name: 'Sarvam API',
         path: '/assets/typescript.png',
       },
       {
         id: 4,
-        name: 'Vite',
+        name: 'RAG',
         path: '/assets/framer.png',
       },
     ],
   },
+
   {
     title: 'Mobile-Hi-SAM — Lightweight Text Segmentation',
     desc: 'A parameter-efficient hierarchical text segmentation model designed for edge deployment. Integrates MobileSAM\'s TinyViT encoder and Hi-SAM pipeline with a custom hierarchical decoder for word, line, and paragraph segmentation on the HierText dataset.',
