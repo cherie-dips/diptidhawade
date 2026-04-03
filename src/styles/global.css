@@ -90,6 +90,7 @@ body.theme-light {
   .contact-globe-row {
     flex-direction: column;
     min-height: 0;
+    margin-left: 0;
   }
 
   .contact-globe-col:first-child {
