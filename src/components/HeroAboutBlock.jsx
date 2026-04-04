@@ -29,6 +29,18 @@ const PAIR_COUNT = 4;
 
 const LOGO_MARGIN = 6;
 
+/** Inner radius (px) words are pushed out of — “blank circle” under cursor */
+const WORD_HOLE_RADIUS = 26;
+/** Outer radius (px) where repulsion fades to zero */
+const WORD_REPULSION_RADIUS = 105;
+/** Max displacement (px) for a word near the cursor */
+const WORD_MAX_PUSH = 22;
+
+function splitLineIntoSegments(lineText) {
+  if (!lineText) return [];
+  return lineText.split(/(\s+)/).filter((p) => p.length > 0);
+}
+
 function buildCanvasFontString(el) {
   const cs = getComputedStyle(el);
   const style = cs.fontStyle === "normal" ? "" : `${cs.fontStyle} `;
@@ -127,6 +139,8 @@ export default function HeroAboutBlock() {
   const linesSigRef = useRef("");
   const activePairRef = useRef(0);
   const reducedMotionRef = useRef(readReducedMotion());
+  /** Viewport coords for per-word repulsion; mouse only */
+  const hoverPointerClientRef = useRef(null);
 
   const [activePair, setActivePair] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(readReducedMotion);
@@ -225,6 +239,59 @@ export default function HeroAboutBlock() {
     setActivePair((p) => (p + 1) % PAIR_COUNT);
   }, []);
 
+  const applyWordRepulsion = useCallback(() => {
+    const col = columnRef.current;
+    if (!col) return;
+    const words = col.querySelectorAll(".hero-flow-word");
+    if (reducedMotionRef.current) {
+      words.forEach((el) => {
+        el.style.transform = "";
+      });
+      return;
+    }
+    const pt = hoverPointerClientRef.current;
+    if (!pt) {
+      words.forEach((el) => {
+        el.style.transform = "";
+      });
+      return;
+    }
+    const { x: cx, y: cy } = pt;
+    for (const el of words) {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) continue;
+      const wx = r.left + r.width * 0.5;
+      const wy = r.top + r.height * 0.55;
+      const dx = wx - cx;
+      const dy = wy - cy;
+      const dist = Math.hypot(dx, dy);
+      if (!dist || dist > WORD_REPULSION_RADIUS) {
+        el.style.transform = "";
+        continue;
+      }
+      const nx = dx / dist;
+      const ny = dy / dist;
+      const edge = 1 - dist / WORD_REPULSION_RADIUS;
+      const strength = edge * edge;
+      const holeFactor =
+        dist < WORD_HOLE_RADIUS
+          ? (1 - dist / WORD_HOLE_RADIUS) ** 1.35
+          : 0;
+      const push = WORD_MAX_PUSH * strength + WORD_MAX_PUSH * 0.95 * holeFactor;
+      el.style.transform = `translate(${nx * push}px, ${ny * push}px)`;
+    }
+  }, []);
+
+  const onColumnPointerMove = useCallback((e) => {
+    if (e.pointerType !== "mouse" || reducedMotionRef.current) return;
+    hoverPointerClientRef.current = { x: e.clientX, y: e.clientY };
+  }, []);
+
+  const onColumnPointerLeave = useCallback(() => {
+    hoverPointerClientRef.current = null;
+    applyWordRepulsion();
+  }, [applyWordRepulsion]);
+
   const slotOpts = {
     motionRefs,
     activePair,
@@ -260,11 +327,17 @@ export default function HeroAboutBlock() {
     let id = 0;
     function tick() {
       layoutFrame();
+      applyWordRepulsion();
       id = requestAnimationFrame(tick);
     }
     id = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(id);
-  }, [layoutFrame, reducedMotion]);
+  }, [layoutFrame, applyWordRepulsion, reducedMotion]);
+
+  useLayoutEffect(() => {
+    if (reducedMotion || fallback) return;
+    applyWordRepulsion();
+  }, [lines, reducedMotion, fallback, applyWordRepulsion]);
 
   return (
     <div className="hero-about-rail">
@@ -272,7 +345,12 @@ export default function HeroAboutBlock() {
         {techLogos.slice(0, 4).map((item, slot) => renderLogoSlot(item, slot, slotOpts))}
       </div>
 
-      <div className="hero-pretext-column" ref={columnRef}>
+      <div
+        className="hero-pretext-column"
+        ref={columnRef}
+        onPointerMove={onColumnPointerMove}
+        onPointerLeave={onColumnPointerLeave}
+      >
         <span
           ref={measureRef}
           className="hero-flow-line hero-font-measurer"
@@ -304,7 +382,17 @@ export default function HeroAboutBlock() {
                   "padding-left 0.18s ease-out, padding-right 0.18s ease-out",
               }}
             >
-              {text}
+              {splitLineIntoSegments(text).map((segment, i) =>
+                /^\s+$/.test(segment) ? (
+                  <span key={`${key}-s-${i}`} className="hero-flow-space">
+                    {segment}
+                  </span>
+                ) : (
+                  <span key={`${key}-w-${i}`} className="hero-flow-word">
+                    {segment}
+                  </span>
+                )
+              )}
             </p>
           ))}
       </div>
