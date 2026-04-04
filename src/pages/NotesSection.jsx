@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
-import { HiBars3 } from "react-icons/hi2";
+import { HiBars3, HiChevronRight, HiChevronDown } from "react-icons/hi2";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import { FOLDER_TYPES, SLUG_TO_FOLDER } from "../constants/index.js";
+import { FOLDER_TYPES, FOLDER_SLUGS, SLUG_TO_FOLDER } from "../constants/index.js";
 import { useNotes } from "../hooks/useNotes.js";
 import { useSubjectFiles } from "../hooks/useSubjectFiles.js";
 import { supabase, hasConfig, NOTES_BUCKET } from "../supabase.js";
@@ -25,7 +25,49 @@ export default function NotesSection() {
   const folderName = SLUG_TO_FOLDER[folderSlug];
   const category = categories.find((c) => c.id === categoryId);
   const subject = category?.subjects.find((s) => s.id === subjectId);
-  const pdfs = folderName && folders ? (folders[folderName] || []) : [];
+
+  const itemsByFolder = useMemo(() => {
+    const empty = Object.fromEntries(FOLDER_TYPES.map((n) => [n, []]));
+    if (!hasConfig || !supabase || !folders) return empty;
+    const result = { ...empty };
+    for (const name of FOLDER_TYPES) {
+      const list = folders[name] || [];
+      result[name] = list
+        .map((item) => {
+          const { data } = supabase.storage.from(NOTES_BUCKET).getPublicUrl(item.storagePath);
+          return data?.publicUrl ? { ...item, url: data.publicUrl } : null;
+        })
+        .filter(Boolean);
+    }
+    return result;
+  }, [folders]);
+
+  const [activeStoragePath, setActiveStoragePath] = useState(null);
+  const [expandedSlugs, setExpandedSlugs] = useState(
+    () => new Set(folderSlug ? [folderSlug] : [])
+  );
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    if (!folderSlug) return;
+    setExpandedSlugs((prev) => new Set(prev).add(folderSlug));
+  }, [folderSlug]);
+
+  useEffect(() => {
+    if (!folderName || !FOLDER_TYPES.includes(folderName)) {
+      setActiveStoragePath(null);
+      return;
+    }
+    const items = itemsByFolder[folderName] || [];
+    if (items.length === 0) {
+      setActiveStoragePath(null);
+      return;
+    }
+    setActiveStoragePath((prev) => {
+      if (prev && items.some((i) => i.storagePath === prev)) return prev;
+      return items[0].storagePath;
+    });
+  }, [folderSlug, folderName, itemsByFolder]);
 
   if (!folderName || !FOLDER_TYPES.includes(folderName)) {
     return (
@@ -49,22 +91,33 @@ export default function NotesSection() {
     );
   }
 
-  const itemsWithUrl = useMemo(() => {
-    if (!hasConfig || !supabase) return [];
-    return pdfs
-      .map((item) => {
-        const { data } = supabase.storage.from(NOTES_BUCKET).getPublicUrl(item.storagePath);
-        return data?.publicUrl
-          ? { ...item, url: data.publicUrl }
-          : null;
-      })
-      .filter(Boolean);
-  }, [pdfs]);
+  const itemsWithUrl = itemsByFolder[folderName] || [];
+  const activeItem =
+    itemsWithUrl.find((i) => i.storagePath === activeStoragePath) ?? itemsWithUrl[0] ?? null;
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const hasItems = itemsWithUrl.length > 0;
-  const activeItem = hasItems ? itemsWithUrl[Math.min(activeIndex, itemsWithUrl.length - 1)] : null;
+  const toggleExpanded = (slug) => {
+    setExpandedSlugs((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
+  };
+
+  const openFolderCategory = (name) => {
+    const slug = FOLDER_SLUGS[name];
+    setExpandedSlugs((prev) => new Set(prev).add(slug));
+    navigate(`/notes/${categoryId}/${subjectId}/${slug}`);
+  };
+
+  const selectPdf = (folderDisplayName, item) => {
+    const slug = FOLDER_SLUGS[folderDisplayName];
+    setExpandedSlugs((prev) => new Set(prev).add(slug));
+    setActiveStoragePath(item.storagePath);
+    if (folderSlug !== slug) {
+      navigate(`/notes/${categoryId}/${subjectId}/${slug}`);
+    }
+  };
 
   return (
     <div className="notes-page notes-section-page page-content">
@@ -82,27 +135,70 @@ export default function NotesSection() {
             <HiBars3 aria-hidden="true" />
           </button>
           {isSidebarOpen && (
-            <>
-              <h2 className="notes-section-page-heading">{folderName}</h2>
-              <aside className="notes-section-sidebar">
-                <ul className="notes-pdf-list notes-pdf-list-sidebar">
-                  {itemsWithUrl.map((item, index) => (
-                    <li key={item.storagePath || index}>
-                      <button
-                        type="button"
-                        className={
-                          "notes-pdf-link notes-pdf-link-button" +
-                          (index === activeIndex ? " notes-pdf-link-active" : "")
-                        }
-                        onClick={() => setActiveIndex(index)}
-                      >
-                        {item.title}
-                      </button>
+            <aside className="notes-section-sidebar notes-section-sidebar-tree">
+              <ul className="notes-tree-root" role="tree" aria-label="Notes folders">
+                {FOLDER_TYPES.map((fname) => {
+                  const slug = FOLDER_SLUGS[fname];
+                  const expanded = expandedSlugs.has(slug);
+                  const files = itemsByFolder[fname] || [];
+                  const isActiveFolder = folderSlug === slug;
+
+                  return (
+                    <li key={fname} className="notes-tree-folder" role="treeitem" aria-expanded={expanded}>
+                      <div className="notes-tree-folder-row">
+                        <button
+                          type="button"
+                          className="notes-tree-chevron"
+                          aria-label={expanded ? `Collapse ${fname}` : `Expand ${fname}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleExpanded(slug);
+                          }}
+                        >
+                          {expanded ? (
+                            <HiChevronDown aria-hidden="true" className="notes-tree-chevron-icon" />
+                          ) : (
+                            <HiChevronRight aria-hidden="true" className="notes-tree-chevron-icon" />
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          className={
+                            "notes-tree-folder-label" +
+                            (isActiveFolder ? " notes-tree-folder-label-active" : "")
+                          }
+                          onClick={() => openFolderCategory(fname)}
+                        >
+                          {fname}
+                        </button>
+                      </div>
+                      {expanded && files.length > 0 && (
+                        <ul className="notes-tree-files" role="group">
+                          {files.map((item) => {
+                            const isActivePdf =
+                              isActiveFolder && activeItem?.storagePath === item.storagePath;
+                            return (
+                              <li key={item.storagePath} className="notes-tree-file">
+                                <button
+                                  type="button"
+                                  className={
+                                    "notes-tree-file-btn" +
+                                    (isActivePdf ? " notes-tree-file-btn-active" : "")
+                                  }
+                                  onClick={() => selectPdf(fname, item)}
+                                >
+                                  {item.title}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
                     </li>
-                  ))}
-                </ul>
-              </aside>
-            </>
+                  );
+                })}
+              </ul>
+            </aside>
           )}
         </div>
 

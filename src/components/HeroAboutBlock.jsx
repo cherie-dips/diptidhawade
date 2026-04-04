@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { layoutNextLine, prepareWithSegments } from "@chenglou/pretext";
+import { useCallback, useEffect, useRef } from "react";
 import {
   FaReact,
   FaPython,
@@ -25,231 +24,51 @@ const techLogos = [
   { name: "Docker", Icon: FaDocker, color: "#2496ED" },
 ];
 
-const PAIR_COUNT = 4;
-
-const LOGO_MARGIN = 6;
-
-/** Inner radius (px) words are pushed out of — “blank circle” under cursor */
 const WORD_HOLE_RADIUS = 26;
-/** Outer radius (px) where repulsion fades to zero */
 const WORD_REPULSION_RADIUS = 105;
-/** Max displacement (px) for a word near the cursor */
 const WORD_MAX_PUSH = 22;
-
-function splitLineIntoSegments(lineText) {
-  if (!lineText) return [];
-  return lineText.split(/(\s+)/).filter((p) => p.length > 0);
-}
-
-function buildCanvasFontString(el) {
-  const cs = getComputedStyle(el);
-  const style = cs.fontStyle === "normal" ? "" : `${cs.fontStyle} `;
-  return `${style}${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`.trim();
-}
-
-function parseLineHeightPx(cs, fallbackPx) {
-  const lh = cs.lineHeight;
-  if (lh === "normal") return fallbackPx * 1.6;
-  const n = Number.parseFloat(lh);
-  return Number.isFinite(n) ? n : fallbackPx * 1.6;
-}
-
-function logoBoxInColumn(logoRect, columnRect) {
-  const inflate = LOGO_MARGIN;
-  return {
-    left: logoRect.left - columnRect.left - inflate,
-    top: logoRect.top - columnRect.top - inflate,
-    right: logoRect.right - columnRect.left + inflate,
-    bottom: logoRect.bottom - columnRect.top + inflate,
-  };
-}
-
-function insetsForLineBand(boxes, y0, y1, fullW) {
-  let leftInset = 0;
-  let rightInset = 0;
-  for (const b of boxes) {
-    if (b.bottom <= y0 || b.top >= y1) continue;
-    const cx = (b.left + b.right) / 2;
-    if (cx < fullW * 0.5) {
-      leftInset = Math.max(leftInset, Math.min(fullW, b.right));
-    } else {
-      rightInset = Math.max(rightInset, Math.max(0, fullW - b.left));
-    }
-  }
-  const maxW = Math.max(64, fullW - leftInset - rightInset);
-  return { maxW, leftInset, rightInset };
-}
-
-function rectsIntersect(a, b) {
-  return !(a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
-}
-
-function linesSignature(rows) {
-  return rows
-    .map((r) => `${r.key}|${r.leftInset}|${r.rightInset}|${r.text}`)
-    .join("\u001e");
-}
 
 function readReducedMotion() {
   if (typeof window === "undefined") return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function renderLogoSlot(item, i, opts) {
-  const { name, Icon: TechIcon, color } = item;
-  const {
-    motionRefs,
-    activePair,
-    reducedMotion,
-    onPairEnd,
-  } = opts;
-
-  const isLeftPartner = i < 4 && i === activePair;
-  const isRightPartner = i >= 4 && i === 7 - activePair;
-  let motionClass = "hero-tech-seq-motion";
-  if (!reducedMotion && isLeftPartner) {
-    motionClass += " hero-tech-seq-motion--active-left";
-  } else if (!reducedMotion && isRightPartner) {
-    motionClass += " hero-tech-seq-motion--active-right";
-  }
-
-  return (
-    <div key={name} className="hero-tech-rail-slot">
-      <div
-        ref={(el) => {
-          motionRefs.current[i] = el;
-        }}
-        className={motionClass}
-        onAnimationEnd={isLeftPartner ? onPairEnd : undefined}
-      >
-        <div className="hero-tech-item" title={name}>
-          <TechIcon className="hero-tech-icon" style={{ color }} aria-hidden />
-        </div>
-      </div>
-    </div>
-  );
+function splitDescriptionSegments(text) {
+  if (!text) return [];
+  return text.split(/(\s+)/).filter((p) => p.length > 0);
 }
 
 export default function HeroAboutBlock() {
-  const columnRef = useRef(null);
-  const measureRef = useRef(null);
-  const motionRefs = useRef([]);
-  const preparedRef = useRef(null);
-  const fontKeyRef = useRef("");
-  const linesSigRef = useRef("");
-  const activePairRef = useRef(0);
+  const wrapRef = useRef(null);
+  const pointerRef = useRef(null);
   const reducedMotionRef = useRef(readReducedMotion());
-  /** Viewport coords for per-word repulsion; mouse only */
-  const hoverPointerClientRef = useRef(null);
-
-  const [activePair, setActivePair] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(readReducedMotion);
-  const [lines, setLines] = useState([]);
-  const [fallback, setFallback] = useState(true);
-
-  useEffect(() => {
-    activePairRef.current = activePair;
-  }, [activePair]);
-
-  useEffect(() => {
-    reducedMotionRef.current = reducedMotion;
-  }, [reducedMotion]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReducedMotion(mq.matches);
+    const sync = () => {
+      reducedMotionRef.current = mq.matches;
+      if (mq.matches && wrapRef.current) {
+        wrapRef.current.querySelectorAll(".hero-about-word").forEach((el) => {
+          el.style.transform = "";
+        });
+      }
+    };
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  const syncPrepared = useCallback(() => {
-    const measure = measureRef.current;
-    if (!measure) return;
-    const font = buildCanvasFontString(measure);
-    const key = `${font}|${heroContent.description}`;
-    if (preparedRef.current && fontKeyRef.current === key) return;
-    preparedRef.current = prepareWithSegments(heroContent.description, font);
-    fontKeyRef.current = key;
-  }, []);
-
-  const layoutFrame = useCallback(() => {
-    const column = columnRef.current;
-    const prepared = preparedRef.current;
-    if (!column || !prepared) return;
-
-    const colRect = column.getBoundingClientRect();
-    const fullW = column.clientWidth;
-    if (fullW <= 0) return;
-
-    const measure = measureRef.current;
-    const cs = getComputedStyle(measure ?? column);
-    const fontSize = Number.parseFloat(cs.fontSize) || 16;
-    const lineHeightPx = parseLineHeightPx(cs, fontSize);
-
-    const boxes = [];
-    if (!reducedMotionRef.current) {
-      const k = activePairRef.current;
-      const leftIdx = k;
-      const rightIdx = 7 - k;
-      for (const idx of [leftIdx, rightIdx]) {
-        const motionEl = motionRefs.current[idx];
-        if (!motionEl) continue;
-        const lr = motionEl.getBoundingClientRect();
-        if (rectsIntersect(lr, colRect)) {
-          boxes.push(logoBoxInColumn(lr, colRect));
-        }
-      }
-    }
-
-    const nextLines = [];
-    let cursor = { segmentIndex: 0, graphemeIndex: 0 };
-    let y = 0;
-
-    while (true) {
-      const { maxW, leftInset, rightInset } = insetsForLineBand(
-        boxes,
-        y,
-        y + lineHeightPx,
-        fullW
-      );
-      const line = layoutNextLine(prepared, cursor, maxW);
-      if (line === null) break;
-      nextLines.push({
-        key: `${line.start.segmentIndex}-${line.start.graphemeIndex}`,
-        text: line.text,
-        leftInset,
-        rightInset,
-      });
-      cursor = line.end;
-      y += lineHeightPx;
-    }
-
-    if (nextLines.length === 0) return;
-
-    const sig = linesSignature(nextLines);
-    if (sig !== linesSigRef.current) {
-      linesSigRef.current = sig;
-      setLines(nextLines);
-    }
-    setFallback(false);
-  }, []);
-
-  const onPairEnd = useCallback(() => {
-    setActivePair((p) => (p + 1) % PAIR_COUNT);
-  }, []);
-
-  const applyWordRepulsion = useCallback(() => {
-    const col = columnRef.current;
-    if (!col) return;
-    const words = col.querySelectorAll(".hero-flow-word");
+  const applyWordRipple = useCallback(() => {
+    const root = wrapRef.current;
+    if (!root) return;
+    const words = root.querySelectorAll(".hero-about-word");
     if (reducedMotionRef.current) {
       words.forEach((el) => {
         el.style.transform = "";
       });
       return;
     }
-    const pt = hoverPointerClientRef.current;
+    const pt = pointerRef.current;
     if (!pt) {
       words.forEach((el) => {
         el.style.transform = "";
@@ -274,133 +93,59 @@ export default function HeroAboutBlock() {
       const edge = 1 - dist / WORD_REPULSION_RADIUS;
       const strength = edge * edge;
       const holeFactor =
-        dist < WORD_HOLE_RADIUS
-          ? (1 - dist / WORD_HOLE_RADIUS) ** 1.35
-          : 0;
+        dist < WORD_HOLE_RADIUS ? (1 - dist / WORD_HOLE_RADIUS) ** 1.35 : 0;
       const push = WORD_MAX_PUSH * strength + WORD_MAX_PUSH * 0.95 * holeFactor;
       el.style.transform = `translate(${nx * push}px, ${ny * push}px)`;
     }
   }, []);
 
-  const onColumnPointerMove = useCallback((e) => {
-    if (e.pointerType !== "mouse" || reducedMotionRef.current) return;
-    hoverPointerClientRef.current = { x: e.clientX, y: e.clientY };
-  }, []);
+  const onPointerMove = useCallback(
+    (e) => {
+      if (e.pointerType !== "mouse" || reducedMotionRef.current) return;
+      pointerRef.current = { x: e.clientX, y: e.clientY };
+      applyWordRipple();
+    },
+    [applyWordRipple]
+  );
 
-  const onColumnPointerLeave = useCallback(() => {
-    hoverPointerClientRef.current = null;
-    applyWordRepulsion();
-  }, [applyWordRepulsion]);
+  const onPointerLeave = useCallback(() => {
+    pointerRef.current = null;
+    applyWordRipple();
+  }, [applyWordRipple]);
 
-  const slotOpts = {
-    motionRefs,
-    activePair,
-    reducedMotion,
-    onPairEnd,
-  };
-
-  useLayoutEffect(() => {
-    let cancelled = false;
-    const start = () => {
-      if (cancelled) return;
-      syncPrepared();
-      layoutFrame();
-    };
-    if (document.fonts?.ready) {
-      document.fonts.ready.then(start);
-    } else {
-      start();
-    }
-    const ro = new ResizeObserver(() => {
-      syncPrepared();
-      layoutFrame();
-    });
-    if (columnRef.current) ro.observe(columnRef.current);
-    return () => {
-      cancelled = true;
-      ro.disconnect();
-    };
-  }, [layoutFrame, syncPrepared]);
-
-  useEffect(() => {
-    if (reducedMotion) return undefined;
-    let id = 0;
-    function tick() {
-      layoutFrame();
-      applyWordRepulsion();
-      id = requestAnimationFrame(tick);
-    }
-    id = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(id);
-  }, [layoutFrame, applyWordRepulsion, reducedMotion]);
-
-  useLayoutEffect(() => {
-    if (reducedMotion || fallback) return;
-    applyWordRepulsion();
-  }, [lines, reducedMotion, fallback, applyWordRepulsion]);
+  const segments = splitDescriptionSegments(heroContent.description);
 
   return (
     <div className="hero-about-rail">
-      <div className="hero-tech-rail hero-tech-rail--left" aria-label="Technologies left">
-        {techLogos.slice(0, 4).map((item, slot) => renderLogoSlot(item, slot, slotOpts))}
-      </div>
-
       <div
-        className="hero-pretext-column"
-        ref={columnRef}
-        onPointerMove={onColumnPointerMove}
-        onPointerLeave={onColumnPointerLeave}
+        ref={wrapRef}
+        className="hero-about-text-ripple"
+        onPointerMove={onPointerMove}
+        onPointerLeave={onPointerLeave}
       >
-        <span
-          ref={measureRef}
-          className="hero-flow-line hero-font-measurer"
-          aria-hidden
-        >
-          A
-        </span>
-
-        {reducedMotion && (
-          <p className="hero-description">{heroContent.description}</p>
-        )}
-
-        {!reducedMotion && fallback && (
-          <p className="hero-description hero-description--pretext-fallback">
-            {heroContent.description}
-          </p>
-        )}
-
-        {!reducedMotion &&
-          !fallback &&
-          lines.map(({ key, text, leftInset, rightInset }) => (
-            <p
-              key={key}
-              className="hero-flow-line"
-              style={{
-                paddingLeft: leftInset > 0 ? `${leftInset}px` : undefined,
-                paddingRight: rightInset > 0 ? `${rightInset}px` : undefined,
-                transition:
-                  "padding-left 0.18s ease-out, padding-right 0.18s ease-out",
-              }}
-            >
-              {splitLineIntoSegments(text).map((segment, i) =>
-                /^\s+$/.test(segment) ? (
-                  <span key={`${key}-s-${i}`} className="hero-flow-space">
-                    {segment}
-                  </span>
-                ) : (
-                  <span key={`${key}-w-${i}`} className="hero-flow-word">
-                    {segment}
-                  </span>
-                )
-              )}
-            </p>
-          ))}
+        <p className="hero-description hero-description--about">
+          {segments.map((segment, i) =>
+            /^\s+$/.test(segment) ? (
+              <span key={i} className="hero-about-segment-space">
+                {segment}
+              </span>
+            ) : (
+              <span key={i} className="hero-about-word">
+                {segment}
+              </span>
+            )
+          )}
+        </p>
       </div>
 
-      <div className="hero-tech-rail hero-tech-rail--right" aria-label="Technologies right">
-        {techLogos.slice(4, 8).map((item, slot) =>
-          renderLogoSlot(item, slot + 4, slotOpts)
-        )}
+      <div className="hero-tech-icons-scroll">
+        <div className="hero-tech-icons-row" aria-label="Technologies">
+          {techLogos.map(({ name, Icon, color }) => (
+            <div key={name} className="hero-tech-item" title={name}>
+              <Icon className="hero-tech-icon" style={{ color }} aria-hidden />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

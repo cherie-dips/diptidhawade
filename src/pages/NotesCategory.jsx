@@ -31,7 +31,7 @@ export default function NotesCategory() {
       <ul className="notes-subject-list">
         {category.subjects.map((subj) => (
           <li key={subj.id}>
-            <Link to={`/notes/${categoryId}/${subj.id}`} className="notes-subject-card">
+            <Link to={`/notes/${categoryId}/${subj.id}/class-notes`} className="notes-subject-card">
               {subj.name}
             </Link>
           </li>

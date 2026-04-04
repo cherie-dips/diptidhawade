@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, useParams } from "react-router-dom";
 import Navbar from "./sections/Navbar.jsx";
 import Hero from "./sections/Hero.jsx";
 import TravelGlobe from "./sections/Travelglobe.jsx";
@@ -7,8 +7,12 @@ import Projects from "./sections/Projects.jsx";
 import Contact from "./sections/Contact.jsx";
 import NotesList from "./pages/NotesList.jsx";
 import NotesCategory from "./pages/NotesCategory.jsx";
-import NotesSubject from "./pages/NotesSubject.jsx";
 import NotesSection from "./pages/NotesSection.jsx";
+
+function NotesSubjectToViewerRedirect() {
+  const { categoryId, subjectId } = useParams();
+  return <Navigate to={`/notes/${categoryId}/${subjectId}/class-notes`} replace />;
+}
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -140,7 +144,7 @@ const App = () => {
           <Route path="/" element={<HomeScrollPage />} />
           <Route path="/notes" element={<NotesList />} />
           <Route path="/notes/:categoryId" element={<NotesCategory />} />
-          <Route path="/notes/:categoryId/:subjectId" element={<NotesSubject />} />
+          <Route path="/notes/:categoryId/:subjectId" element={<NotesSubjectToViewerRedirect />} />
           <Route path="/notes/:categoryId/:subjectId/:folderSlug" element={<NotesSection />} />
         </Routes>
       </main>

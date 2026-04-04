@@ -63,125 +63,77 @@
   white-space: pre-line;
 }
 
-/* About block left-aligned with title; copy centered inside the column; rails absolute to sides. */
+/* About copy + word ripple on hover; tech icons in one row (scroll if needed) */
 .hero-about-rail {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   max-width: 40rem;
   margin-top: 0.5rem;
-  /* At least as tall as the four stacked logos so rails don’t spill past the block */
-  min-height: calc(4 * 3rem + 3 * 0.65rem);
 }
 
-.hero-tech-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  flex-shrink: 0;
-  margin-top: -0.7rem;
-  position: absolute;
-  top: 0;
-  z-index: 1;
-}
-
-.hero-tech-rail--left {
-  right: 100%;
-  margin-right: 1rem;
-}
-
-.hero-tech-rail--right {
-  left: 100%;
-  margin-left: 1rem;
-}
-
-.hero-tech-rail-slot {
-  flex: 0 0 auto;
-}
-
-.hero-pretext-column {
-  position: relative;
-  width: 100%;
-  min-width: 0;
+.hero-about-rail .hero-description {
   margin-top: 0;
+  width: 100%;
+}
+
+.hero-about-text-ripple {
+  width: 100%;
+  max-width: 48rem;
+}
+
+.hero-description--about {
   text-align: center;
+  white-space: pre-line;
 }
 
-.hero-font-measurer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  pointer-events: none;
-  white-space: nowrap;
+.hero-about-segment-space {
+  white-space: pre;
 }
 
-.hero-flow-line {
-  font-size: clamp(0.9375rem, 1.5vw, 1rem);
-  line-height: 1.6;
-  color: var(--color-text-muted);
-  margin: 0;
-  max-width: 100%;
-  text-align: center;
-}
-
-/* Per-word hover repulsion (Pretext lines split into segments) */
-.hero-flow-word {
+.hero-about-word {
   display: inline-block;
   position: relative;
   will-change: transform;
 }
 
-.hero-flow-space {
-  white-space: pre;
-}
-
-.hero-description--pretext-fallback {
-  margin-top: 0;
-}
-
-.hero-pretext-column > .hero-description {
-  margin-top: 0;
-}
-
-.hero-tech-seq-motion {
+.hero-tech-icons-scroll {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 1.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
   display: flex;
   justify-content: center;
-  will-change: transform;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
 
-@keyframes hero-tech-seq-x-left {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  40% {
-    transform: translateX(18px);
-  }
+.hero-tech-icons-scroll::-webkit-scrollbar {
+  height: 6px;
 }
 
-@keyframes hero-tech-seq-x-right {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  40% {
-    transform: translateX(-22px);
-  }
+.hero-tech-icons-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
 }
 
-.hero-tech-seq-motion--active-left {
-  animation: hero-tech-seq-x-left 1.90s ease-in-out;
+body.theme-light .hero-tech-icons-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.hero-tech-seq-motion--active-right {
-  animation: hero-tech-seq-x-right 1.90s ease-in-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-tech-seq-motion--active-left,
-  .hero-tech-seq-motion--active-right {
-    animation: none;
-  }
+.hero-tech-icons-row {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0.4rem, 1.8vw, 0.75rem);
+  width: max-content;
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Accomplishments list — single column, centred like heading / about */
@@ -234,17 +186,13 @@ body.theme-light .hero-inline-link:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  transition: transform 0.2s;
-}
-
-.hero-tech-item:hover {
-  transform: scale(1.08);
+  width: clamp(2.35rem, 7.5vw, 3rem);
+  height: clamp(2.35rem, 7.5vw, 3rem);
+  flex-shrink: 0;
 }
 
 .hero-tech-icon {
-  font-size: 1.5rem;
+  font-size: clamp(1.15rem, 3.8vw, 1.5rem);
 }
 
 .hero-image-col {
@@ -348,45 +296,12 @@ body.theme-light .hero-cv-link:focus .hero-cv-link-icon {
     text-align: center;
   }
 
-  .hero-flow-line {
-    text-align: center;
-    margin-left: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-
   .hero-about-rail {
-    display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
     max-width: 100%;
-    min-height: 0;
   }
 
-  .hero-tech-rail {
-    position: static;
-    margin-left: 0;
-    margin-right: 0;
-    flex-direction: row;
-    flex-wrap: wrap;
+  .hero-tech-icons-scroll {
     justify-content: center;
-    gap: 0.75rem;
-    width: 100%;
-    max-width: 20rem;
-    padding-top: 0;
-  }
-
-  .hero-tech-rail--left {
-    order: 1;
-  }
-
-  .hero-pretext-column {
-    order: 2;
-    text-align: center;
-  }
-
-  .hero-tech-rail--right {
-    order: 3;
   }
 
   .hero-image-col {

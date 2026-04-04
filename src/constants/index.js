@@ -13,10 +13,7 @@ export const cvPdfUrl = '/assets/cv.pdf';
 export const heroContent = {
   title: 'Dipti Dhawade',
   tagline: 'Computer Science & Artificial Intelligence | Plaksha University',
-  description: `I’m a 3rd-year CS & AI student at Plaksha University, obsessed with low-level systems. Currently I'mbuilding NavBot which is an AI chatbot-as-a-service that integrates with any website in under five minutes - because why wait for good tech?
-I actually enjoy studying Discrete Mathematics and Cryptography. I’m a C/C++ loyalist currently venturing into the world of building my own Scripting Language - yes I’m reading Crafting Interpreters by Robert Nystrom.
-From engineering Autonomous Underwater Vehicles to solving Bandwidth Constraint Multi-Agent RL Communication, I think I was close enough to doing a Robotics minor.
-My goal? Writing code that doesn’t just run fast, but actually makes an impact in the community.`,
+  description: `I’m a 3rd-year CS & AI student at Plaksha University, obsessed with low-level systems. Currently I'm building NavBot which is an AI chatbot-as-a-service that integrates with any website in under five minutes - because why wait for good tech? I actually enjoy studying Discrete Mathematics and Cryptography. I’m a C/C++ loyalist currently venturing into the world of building my own Scripting Language - yes I’m reading Crafting Interpreters by Robert Nystrom. From engineering Autonomous Underwater Vehicles to solving Bandwidth Constraint Multi-Agent RL Communication, I think I was close enough to doing a Robotics minor. My goal? Writing code that doesn’t just run fast, but actually makes an impact in the community.`,
 
   accomplishments: [
     'Millennium Fellow - Millennium Campus Network × United Nations, 2024',
