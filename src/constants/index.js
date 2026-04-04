@@ -15,7 +15,7 @@ export const heroContent = {
   tagline: 'Computer Science & Artificial Intelligence | Plaksha University',
   description:
     'I’m a 3rd-year CS & AI student at Plaksha University, obsessed with low-level systems and high-speed deployments. \
-    I’m currently building a chatbot that integrates with any website in under five minutes — because why wait for good tech? \
+    I’m currently building NavBot which is an AI chatbot-as-a-service that integrates with any website in under five minutes — because why wait for good tech? \
     I’m the person who actually enjoys Discrete Mathematics and Cryptography. \
     I’m a C/C++ loyalist currently venturing into the world of building my own Scripting Language - yes I\'m reading Crafting Interpreters by Robert Nystrom. \
     From engineering Autonomous Underwater Vehicles to training lightweight text models, I’ve touched almost every layer of the stack. \
