@@ -17,7 +17,7 @@ export const heroContent = {
     'I’m a 3rd-year CS & AI student at Plaksha University, obsessed with low-level systems and high-speed deployments. \
     I’m currently building a chatbot that integrates with any website in under five minutes — because why wait for good tech? \
     I’m the person who actually enjoys Discrete Mathematics and Cryptography. \
-    I’m a C/C++ loyalist currently venturing into the world of Rust to build a sleek Terminal UI. \
+    I’m a C/C++ loyalist currently venturing into the world of building my own Scripting Language - yes I\'m reading Crafting Interpreters by Robert Nystrom. \
     From engineering Autonomous Underwater Vehicles to training lightweight text models, I’ve touched almost every layer of the stack. \
     My goal? Writing code that doesn\'t just run fast, but actually makes a dent in the community.',
 
