@@ -419,11 +419,11 @@ export const myProjects = [
   },
   {
     title: 'NoteScanner - RAG-Powered Notes Assistant',
-    desc: 'NoteScanner uploads course materials, indexes them in ChromaDB, and uses **Sarvam AI**: **Document Intelligence (Sarvam Vision)** for PDF/image OCR and **Chat Completions** (`sarvam-30b` / `sarvam-105b`) for note-grounded Q&A, flashcards, MCQs, and mind maps. It features a FastAPI backend and a React/Vite frontend, orchestrated with Docker Compose.',
+    desc: 'NoteScanner uploads course materials, indexes them in ChromaDB, and uses Sarvam AI: Document Intelligence (Sarvam Vision) for PDF/image OCR and Chat Completions (`sarvam-30b` / `sarvam-105b`) for note-grounded Q&A, flashcards, MCQs, and mind maps. It features a FastAPI backend and a React/Vite frontend, orchestrated with Docker Compose.',
     subdesc:
       'You upload your handwritten notes → the system scans, organizes, and lets you chat with your notes using Retrieval-Augmented Generation (RAG).',
     href: 'https://github.com/cherie-dips/NoteScanner',
-    spotlight: '/assets/projects/note-scanner.png?v=2',
+    spotlight: '/assets/projects/note-scanner.png',
     tags: [
       {
         id: 1,
