@@ -424,6 +424,7 @@ export const myProjects = [
       'You upload your handwritten notes → the system scans, organizes, and lets you chat with your notes using Retrieval-Augmented Generation (RAG).',
     href: 'https://github.com/cherie-dips/NoteScanner',
     spotlight: '/assets/projects/note-scanner.png',
+    website: 'https://cherie-dips.github.io/NoteScanner/',
     tags: [
       {
         id: 1,

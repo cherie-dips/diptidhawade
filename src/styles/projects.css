@@ -140,6 +140,12 @@
   margin-bottom: 0.75rem;
 }
 
+.projects-item-links {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0;
+}
+
 .projects-item-tags {
   display: flex;
   flex-wrap: wrap;
