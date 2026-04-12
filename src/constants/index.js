@@ -371,6 +371,7 @@ export const myProjects = [
     subdesc:
       'NavBot crawls your website, indexes the content into a vector database, and gives you a chatbot that answers only from your site\'s content with source links.',
     href: 'https://github.com/cherie-dips/NavBot',
+    website: 'https://navbot-web.onrender.com/',
     spotlight: 'https://www.youtube.com/watch?v=dQ3EHuyKFAg',
     tags: [
       {

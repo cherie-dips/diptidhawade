@@ -94,7 +94,7 @@ export default function Projects() {
                   rel="noopener noreferrer"
                   className="projects-item-view"
                 >
-                  View
+                  Github
                 </a>
                 {project.website && (
                   <a
