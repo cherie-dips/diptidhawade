@@ -1,9 +1,10 @@
-// Nav: About (no hash in URL), Projects, Contact, Notes (route)
+// Nav: About (no hash in URL), Projects, Contact, Blog, Notes (route)
 export const navLinks = [
   { id: 1, name: "About", hash: "hero" },
   { id: 2, name: "Projects", hash: "projects" },
-  { id: 3, name: "Contact", hash: "contact" },
+  { id: 3, name: "Blog", path: "/blog" },
   { id: 4, name: "Notes", path: "/notes" },
+  { id: 5, name: "Contact", hash: "contact" },
 ];
 
 // CV PDF: place your cv.pdf in public/assets/cv.pdf

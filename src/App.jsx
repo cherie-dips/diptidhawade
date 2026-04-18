@@ -8,6 +8,8 @@ import Contact from "./sections/Contact.jsx";
 import NotesList from "./pages/NotesList.jsx";
 import NotesCategory from "./pages/NotesCategory.jsx";
 import NotesSection from "./pages/NotesSection.jsx";
+import BlogIndex from "./pages/BlogIndex.jsx";
+import BlogPost from "./pages/BlogPost.jsx";
 
 function NotesSubjectToViewerRedirect() {
   const { categoryId, subjectId } = useParams();
@@ -146,6 +148,8 @@ const App = () => {
           <Route path="/notes/:categoryId" element={<NotesCategory />} />
           <Route path="/notes/:categoryId/:subjectId" element={<NotesSubjectToViewerRedirect />} />
           <Route path="/notes/:categoryId/:subjectId/:folderSlug" element={<NotesSection />} />
+          <Route path="/blog" element={<BlogIndex />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
         </Routes>
       </main>
     </Router>

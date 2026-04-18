@@ -16,6 +16,7 @@ const NavItems = ({ onNavigate }) => {
   const location = useLocation();
   const basePath = BASE.replace(/\/$/, "");
   const isNotesPage = location.pathname === basePath + "/notes" || location.pathname.startsWith(basePath + "/notes/");
+  const isBlogPage = location.pathname === basePath + "/blog" || location.pathname.startsWith(basePath + "/blog/");
   const isRoot = location.pathname === basePath || location.pathname === basePath + "/";
 
   return (
@@ -25,7 +26,9 @@ const NavItems = ({ onNavigate }) => {
           {path ? (
             <Link
               to={path}
-              className={`nav-li_a ${path === "/notes" && isNotesPage ? "nav-li_a-active" : ""}`}
+              className={`nav-li_a ${
+                (path === "/notes" && isNotesPage) || (path === "/blog" && isBlogPage) ? "nav-li_a-active" : ""
+              }`}
               onClick={onNavigate}
             >
               {name}
