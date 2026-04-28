@@ -42,26 +42,27 @@ function scrollToSection(id) {
 
 function ScrollToHash() {
   const { pathname, hash } = useLocation();
+  const normalizedHash = hash === "#about" ? "#hero" : hash;
   useEffect(() => {
     if (pathname !== "/") return;
-    if (hash === "#hero") {
+    if (normalizedHash === "#hero") {
       window.history.replaceState(null, "", BASE);
     }
-    const id = hash ? hash.slice(1) : "hero";
+    const id = normalizedHash ? normalizedHash.slice(1) : "hero";
     const el = document.getElementById(id);
     if (el) {
       requestAnimationFrame(() => {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     }
-  }, [pathname, hash]);
+  }, [pathname, normalizedHash]);
 
   useEffect(() => {
     const basePath = BASE.replace(/\/$/, "");
     const onHashChange = () => {
       const isRoot = window.location.pathname === basePath || window.location.pathname === basePath + "/";
       if (!isRoot) return;
-      const id = window.location.hash.slice(1);
+      const id = (window.location.hash === "#about" ? "hero" : window.location.hash.slice(1));
       scrollToSection(id || "hero");
     };
     window.addEventListener("hashchange", onHashChange);

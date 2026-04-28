@@ -1,10 +1,9 @@
-// Nav: About (no hash in URL), Projects, Contact, Blog, Notes (route)
+// Nav: Projects, Blog, Notes, Contact
 export const navLinks = [
-  { id: 1, name: "About", hash: "hero" },
-  { id: 2, name: "Projects", hash: "projects" },
-  { id: 3, name: "Blog", path: "/blog" },
-  { id: 4, name: "Notes", path: "/notes" },
-  { id: 5, name: "Contact", hash: "contact" },
+  { id: 1, name: "Projects", hash: "projects" },
+  { id: 2, name: "Blog", path: "/blog" },
+  { id: 3, name: "Notes", path: "/notes" },
+  { id: 4, name: "Contact", hash: "contact" },
 ];
 
 // CV PDF: place your cv.pdf in public/assets/cv.pdf
@@ -27,6 +26,7 @@ export const heroContent = {
 };
 
 export const plakshaUniversityUrl = 'https://www.plaksha.edu.in';
+export const navBotWebsiteUrl = "https://navbot-web.onrender.com/";
 // ─── Travel Globe: cities (lat/lng, photos, emoji) ─────────────────────────
 export const cities = [
   {

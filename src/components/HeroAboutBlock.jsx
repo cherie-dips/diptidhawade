@@ -1,152 +1,137 @@
-import { useCallback, useEffect, useRef } from "react";
-import {
-  FaReact,
-  FaPython,
-  FaGitAlt,
-  FaDocker,
-} from "react-icons/fa";
-import {
-  SiJavascript,
-  SiCplusplus,
-  SiMongodb,
-  SiPostgresql,
-} from "react-icons/si";
-import { heroContent } from "../constants/index.js";
+import { Link } from "react-router-dom";
+import { cvPdfUrl, heroContent, navBotWebsiteUrl, plakshaUniversityUrl } from "../constants/index.js";
+import { assetUrl } from "../utils/assetUrl.js";
 
-const techLogos = [
-  { name: "C++", Icon: SiCplusplus, color: "#00599C" },
-  { name: "JavaScript", Icon: SiJavascript, color: "#F7DF1E" },
-  { name: "Python", Icon: FaPython, color: "#3776AB" },
-  { name: "React", Icon: FaReact, color: "#61DAFB" },
-  { name: "Git", Icon: FaGitAlt, color: "#F05032" },
-  { name: "PostgreSQL", Icon: SiPostgresql, color: "#336791" },
-  { name: "MongoDB", Icon: SiMongodb, color: "#47A248" },
-  { name: "Docker", Icon: FaDocker, color: "#2496ED" },
-];
-
-const WORD_HOLE_RADIUS = 26;
-const WORD_REPULSION_RADIUS = 105;
-const WORD_MAX_PUSH = 22;
-
-function readReducedMotion() {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function splitAccolade(item) {
+  const [title, rest] = item.split(" - ");
+  return { title, subtitle: rest ?? "" };
 }
 
-function splitDescriptionSegments(text) {
-  if (!text) return [];
-  return text.split(/(\s+)/).filter((p) => p.length > 0);
-}
+const craftingInterpretersUrl = "https://craftinginterpreters.com/";
+const spDuttAwardVideoUrl = "https://www.youtube.com/watch?v=HWLXG5a1gso";
+const travelMapCtaText = "Check out my travel map 👣 →";
+const introProjectsText =
+  "Hi there! I’m Dipti. I like to read theoretical computer science books, and I spend most of my time figuring out how things work under the hood. I’ve built projects targeting real-world issues, such as lightweight text segmentation and automated chronic wound assessment. Apart from work, I like to play badminton and travel. Check out my travel map 👣 →";
+const getCvPdfHref = () => `${window.location.origin}${assetUrl(cvPdfUrl)}`;
 
 export default function HeroAboutBlock() {
-  const wrapRef = useRef(null);
-  const pointerRef = useRef(null);
-  const reducedMotionRef = useRef(readReducedMotion());
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => {
-      reducedMotionRef.current = mq.matches;
-      if (mq.matches && wrapRef.current) {
-        wrapRef.current.querySelectorAll(".hero-about-word").forEach((el) => {
-          el.style.transform = "";
-        });
-      }
-    };
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  const applyWordRipple = useCallback(() => {
-    const root = wrapRef.current;
-    if (!root) return;
-    const words = root.querySelectorAll(".hero-about-word");
-    if (reducedMotionRef.current) {
-      words.forEach((el) => {
-        el.style.transform = "";
-      });
-      return;
-    }
-    const pt = pointerRef.current;
-    if (!pt) {
-      words.forEach((el) => {
-        el.style.transform = "";
-      });
-      return;
-    }
-    const { x: cx, y: cy } = pt;
-    for (const el of words) {
-      const r = el.getBoundingClientRect();
-      if (r.width === 0 && r.height === 0) continue;
-      const wx = r.left + r.width * 0.5;
-      const wy = r.top + r.height * 0.55;
-      const dx = wx - cx;
-      const dy = wy - cy;
-      const dist = Math.hypot(dx, dy);
-      if (!dist || dist > WORD_REPULSION_RADIUS) {
-        el.style.transform = "";
-        continue;
-      }
-      const nx = dx / dist;
-      const ny = dy / dist;
-      const edge = 1 - dist / WORD_REPULSION_RADIUS;
-      const strength = edge * edge;
-      const holeFactor =
-        dist < WORD_HOLE_RADIUS ? (1 - dist / WORD_HOLE_RADIUS) ** 1.35 : 0;
-      const push = WORD_MAX_PUSH * strength + WORD_MAX_PUSH * 0.95 * holeFactor;
-      el.style.transform = `translate(${nx * push}px, ${ny * push}px)`;
-    }
-  }, []);
-
-  const onPointerMove = useCallback(
-    (e) => {
-      if (e.pointerType !== "mouse" || reducedMotionRef.current) return;
-      pointerRef.current = { x: e.clientX, y: e.clientY };
-      applyWordRipple();
-    },
-    [applyWordRipple]
-  );
-
-  const onPointerLeave = useCallback(() => {
-    pointerRef.current = null;
-    applyWordRipple();
-  }, [applyWordRipple]);
-
-  const segments = splitDescriptionSegments(heroContent.description);
+  const accolades = (heroContent.accomplishments ?? []).map(splitAccolade);
+  const leftAccolades = accolades.slice(0, 3);
+  const rightAccolades = accolades.slice(3, 6);
 
   return (
-    <div className="hero-about-rail">
-      <div
-        ref={wrapRef}
-        className="hero-about-text-ripple"
-        onPointerMove={onPointerMove}
-        onPointerLeave={onPointerLeave}
-      >
-        <p className="hero-description hero-description--about">
-          {segments.map((segment, i) =>
-            /^\s+$/.test(segment) ? (
-              <span key={i} className="hero-about-segment-space">
-                {segment}
-              </span>
-            ) : (
-              <span key={i} className="hero-about-word">
-                {segment}
-              </span>
-            )
-          )}
-        </p>
-      </div>
-
-      <div className="hero-tech-icons-scroll">
-        <div className="hero-tech-icons-row" aria-label="Technologies">
-          {techLogos.map(({ name, Icon, color }) => (
-            <div key={name} className="hero-tech-item" title={name}>
-              <Icon className="hero-tech-icon" style={{ color }} aria-hidden />
-            </div>
-          ))}
+    <div className="hero-about-v2">
+      <div className="hero-about-v2-top">
+        <div className="hero-about-v2-intro">
+          <h1 className="hero-title">Dipti Dhawade</h1>
+          <p className="hero-about-v2-degree">
+            Computer Science & AI ·{" "}
+            <a
+              href={plakshaUniversityUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-inline-link"
+            >
+              Plaksha University
+            </a>{" "}
+            · BTech
+          </p>
+          <p className="hero-about-v2-body">
+            {introProjectsText.replace(travelMapCtaText, "").trim()}{" "}
+            <a href="#my-journey" className="hero-inline-link">
+              {travelMapCtaText}
+            </a>
+          </p>
+          <div className="hero-about-v2-cta-row">
+            <a
+              href={getCvPdfHref()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-about-v2-cta hero-about-v2-cta-primary"
+            >
+              View Resume
+            </a>
+            <a href="#projects" className="hero-about-v2-cta hero-about-v2-cta-secondary">
+              Explore Projects →
+            </a>
+          </div>
+        </div>
+        <div className="hero-about-v2-photo-wrap">
+          <img src={assetUrl("/assets/Photo.jpeg")} alt="Dipti Dhawade" className="hero-about-v2-photo" />
         </div>
       </div>
+
+      <p className="hero-about-v2-label">What I'm currently upto?</p>
+      <div className="hero-about-v2-lines">
+        <article className="hero-about-v2-line">
+          <p className="hero-about-v2-line-title">Building NavBot</p>
+          <p className="hero-about-v2-line-text">
+            NavBot is an AI chatbot-as-a-service that plugs into any website in under five
+            minutes, no AI knowledge, no backend changes, just add the script in your html head. If you need a quick smart Q&A chatbot for your site, give NavBot a try.
+          </p>
+          <a href={navBotWebsiteUrl} target="_blank" rel="noopener noreferrer" className="hero-inline-link">
+            Try NavBot →
+          </a>
+        </article>
+
+        <article className="hero-about-v2-line">
+          <p className="hero-about-v2-line-title">Writing Notes</p>
+          <p className="hero-about-v2-line-text">
+            Right now, I'm exploring systems programming, building my own
+            scripting language from scratch (Yes, I'm reading Robert
+            Nystrom's{" "}
+            <a
+              href={craftingInterpretersUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-inline-link"
+            >
+              Crafting Interpreters
+            </a>
+            ). Also, check out my notes for some last-minute exam prep.
+          </p>
+          <Link to="/notes" className="hero-inline-link">
+              Browse notes →
+            </Link>
+        </article>
+
+        <article className="hero-about-v2-line">
+          <p className="hero-about-v2-line-title">Beyond the Screen</p>
+          <p className="hero-about-v2-line-text">
+            When I'm not on my computer, you'll find me building something in the robotics lab.
+            My 3D designed and printed project, Grippers for Underwater Manipulation won:
+            <br />
+            <a
+              href={spDuttAwardVideoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-inline-link"
+            >
+              🏆 3rd Place — SP Dutt Award for Innovation and Impact.
+            </a>
+          </p>
+        </article>
+      </div>
+{/*
+      <div className="hero-about-v2-accolades">
+        <ul className="hero-about-v2-accolade-group">
+          {leftAccolades.map((item) => (
+            <li key={item.title} className="hero-about-v2-accolade-item">
+              {item.title}
+              {item.subtitle ? ` - ${item.subtitle}` : ""}
+            </li>
+          ))}
+        </ul>
+        <ul className="hero-about-v2-accolade-group">
+          {rightAccolades.map((item) => (
+            <li key={item.title} className="hero-about-v2-accolade-item">
+              {item.title}
+              {item.subtitle ? ` - ${item.subtitle}` : ""}
+            </li>
+          ))}
+        </ul>
+      </div>
+*/}
     </div>
   );
 }

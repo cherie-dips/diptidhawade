@@ -40,6 +40,7 @@ body.theme-light .navbar-header {
   color: rgb(163 163 163);
   font-weight: 700;
   font-size: 1.25rem;
+  font-family: "Cardinal Classic", "Cormorant Garamond", Georgia, serif;
   transition: color 0.2s;
 }
 
