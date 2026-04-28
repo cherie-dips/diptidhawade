@@ -397,7 +397,31 @@ export const myProjects = [
       },
     ],
   },
-
+  {
+    title: 'Grippers for Underwater Manipulation',
+    desc: 'Designed and prototyped a general-purpose underwater gripper capable of grasping spherical, rigid, delicate, and slippery objects — addressing key challenges like water drag, surface slippage, and buoyancy.',
+    subdesc:
+      'Uses the fin-ray effect (inspired by ray-finned fish bone structure) for passive, load-distributing grasps. Designed and 3D printed in TPU/SLA, exploring worm-follower and rack-and-pinion actuation mechanisms for improved range and precision. 🏆 3rd Place — SP Dutt Award For Innovation and Impact',
+    href: 'https://github.com/cherie-dips/gripping-underwater',
+    spotlight: 'https://www.youtube.com/watch?v=HWLXG5a1gso',
+    tags: [
+      {
+        id: 1,
+        name: '3D Design',
+        path: '/assets/react.svg',
+      },
+      {
+        id: 2,
+        name: 'Soft Robotics',
+        path: 'assets/tailwindcss.png',
+      },
+      {
+        id: 3,
+        name: 'Electronics',
+        path: '/assets/typescript.png',
+      },
+    ],
+  },
   {
     title: 'Mobile-Hi-SAM — Lightweight Text Segmentation',
     desc: 'A parameter-efficient hierarchical text segmentation model designed for edge deployment. Integrates MobileSAM\'s TinyViT encoder and Hi-SAM pipeline with a custom hierarchical decoder for word, line, and paragraph segmentation on the HierText dataset.',
