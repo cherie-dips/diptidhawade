@@ -46,16 +46,12 @@
   color: var(--color-text);
 }
 
-.hero-about-v2-degree {
+.hero-about-v2-tagline {
   margin: 0.45rem 0 1rem;
-  font-size: clamp(1.2rem, 2vw, 1.2rem);
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
   font-weight: 500;
-  text-align: left;
-  color: var(--color-text);
-}
-
-.hero-about-v2-degree .hero-inline-link {
-  color: var(--color-text);
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
 }
 
 .hero-about-v2-body {
@@ -128,89 +124,60 @@
   border: 1px solid var(--color-border);
 }
 
-.hero-about-v2-label {
-  margin: 3.6rem 0 1rem;
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-  color: var(--color-text);
-  text-align: left;
-}
-
-.hero-about-v2-lines {
+/* Featured CTA cards (NavBot + Notes) */
+.hero-about-featured {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem 1.2rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
   margin-top: 3rem;
 }
 
-.hero-about-v2-line {
-  border-left: 1px solid var(--color-border);
-  padding-left: 0.85rem;
+.hero-about-featured-card {
+  background: linear-gradient(180deg, var(--color-bg-elevated) 0%, var(--color-bg-card) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.6rem;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
-.hero-about-v2-line:first-child {
-  border-left: 0;
-  padding-left: 0;
+.hero-about-featured-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-muted);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.hero-about-v2-line-title {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 1rem;
+.hero-about-featured-card-title {
+  font-size: 1.1rem;
   font-weight: 600;
+  color: var(--color-text);
 }
 
-.hero-about-v2-line-text {
-  margin: 0.4rem 0 0;
-  color: var(--color-text-muted);
-  line-height: 1.45;
-  text-align: left;
-}
-
-.hero-about-v2-accolades {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem 1.2rem;
-  width: 100%;
-  margin: 4rem 0 0;
-}
-
-.hero-about-v2-accolade-group {
+.hero-about-featured-card-desc {
   margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.hero-about-v2-accolade-item {
-  margin: 0;
-  position: relative;
-  padding-left: 0.9rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
   color: var(--color-text-muted);
-  font-size: 0.92rem;
-  font-weight: 400;
-  line-height: 1.45;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.hero-about-v2-accolade-item + .hero-about-v2-accolade-item {
-  margin-top: 0.55rem;
+.hero-about-featured-card-cta {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  font-weight: 500;
+  margin-top: auto;
+  border-bottom: 1px solid currentColor;
+  align-self: flex-start;
 }
 
-.hero-about-v2-accolade-item::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  top: 0.02rem;
-  color: #ffffff;
-  font-size: 0.95rem;
-  line-height: 1;
+body.theme-light .hero-about-featured-card {
+  background: linear-gradient(180deg, var(--color-bg-elevated) 0%, var(--color-bg-card) 100%);
 }
 
-body.theme-light .hero-about-v2-accolade-item::before {
-  color: #111111;
+body.theme-light .hero-about-featured-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 }
 
 .hero-inline-link {
@@ -261,11 +228,7 @@ body.theme-light .hero-inline-link:hover {
     justify-content: center;
   }
 
-  .hero-about-v2-lines {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-about-v2-accolades {
+  .hero-about-featured {
     grid-template-columns: 1fr;
   }
 }
