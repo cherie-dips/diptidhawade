@@ -2,8 +2,15 @@ import { Link } from "react-router-dom";
 import { cvPdfUrl, navBotWebsiteUrl, plakshaUniversityUrl } from "../constants/index.js";
 import { assetUrl } from "../utils/assetUrl.js";
 
-const introText =
-  "Hi there! I'm Dipti. I spend most of my time reading CS theory books, solving DSA problems, and thinking about system design. I'm a 3rd-year CS & AI student at Plaksha University, building tools that bridge the gap between theory and practice.";
+const introText = (
+  <>
+    Hi there! I'm Dipti. I'm a CS & AI student at Plaksha University, building
+    software across the stack — from AI powered web apps and edge-deployed deep
+    learning models to systems programming and robotics. I like problems that sit
+    at the intersection of theory and product. I share my learnings through my{" "}
+    <Link to="/notes" className="hero-inline-link">notes</Link> on my website.
+  </>
+);
 const getCvPdfHref = () => `${window.location.origin}${assetUrl(cvPdfUrl)}`;
 
 export default function HeroAboutBlock() {

@@ -4,12 +4,11 @@ import Navbar from "./sections/Navbar.jsx";
 import Hero from "./sections/Hero.jsx";
 import TravelGlobe from "./sections/Travelglobe.jsx";
 import Projects from "./sections/Projects.jsx";
+import Experience from "./sections/Experience.jsx";
 import Contact from "./sections/Contact.jsx";
 import NotesList from "./pages/NotesList.jsx";
 import NotesCategory from "./pages/NotesCategory.jsx";
 import NotesSection from "./pages/NotesSection.jsx";
-import BlogIndex from "./pages/BlogIndex.jsx";
-import BlogPost from "./pages/BlogPost.jsx";
 
 function NotesSubjectToViewerRedirect() {
   const { categoryId, subjectId } = useParams();
@@ -22,7 +21,7 @@ const PageWrapper = ({ children }) => (
   <div className="page-content">{children}</div>
 );
 
-const SECTION_IDS = ["hero", "projects", "contact"];
+const SECTION_IDS = ["hero", "projects", "experience", "contact"];
 
 function scrollToSection(id) {
   if (!id) {
@@ -126,6 +125,11 @@ function HomeScrollPage() {
           <Projects />
         </PageWrapper>
       </div>
+      <div id="experience">
+        <PageWrapper>
+          <Experience />
+        </PageWrapper>
+      </div>
       <div className="contact-globe-row page-content">
         <div id="contact" className="contact-globe-col">
           <Contact />
@@ -149,8 +153,6 @@ const App = () => {
           <Route path="/notes/:categoryId" element={<NotesCategory />} />
           <Route path="/notes/:categoryId/:subjectId" element={<NotesSubjectToViewerRedirect />} />
           <Route path="/notes/:categoryId/:subjectId/:folderSlug" element={<NotesSection />} />
-          <Route path="/blog" element={<BlogIndex />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
         </Routes>
       </main>
     </Router>

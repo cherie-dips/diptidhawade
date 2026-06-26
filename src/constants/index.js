@@ -1,7 +1,6 @@
-// Nav: Projects, Blog, Notes, Contact
 export const navLinks = [
   { id: 1, name: "Projects", hash: "projects" },
-  { id: 2, name: "Blog", path: "/blog" },
+  { id: 2, name: "Experience", hash: "experience" },
   { id: 3, name: "Notes", path: "/notes" },
   { id: 4, name: "Contact", hash: "contact" },
 ];
@@ -13,7 +12,7 @@ export const cvPdfUrl = '/assets/cv.pdf';
 export const heroContent = {
   title: 'Dipti Dhawade',
   tagline: 'Computer Science & Artificial Intelligence | Plaksha University',
-  description: `I’m a 3rd-year CS & AI student at Plaksha University, obsessed with low-level systems. Currently I'm building NavBot which is an AI chatbot-as-a-service that integrates with any website in under five minutes - because why wait for good tech? I actually enjoy studying Discrete Mathematics and Cryptography. I’m a C/C++ loyalist currently venturing into the world of building my own Scripting Language - yes I’m reading Crafting Interpreters by Robert Nystrom. From engineering Autonomous Underwater Vehicles to solving Bandwidth Constraint Multi-Agent RL Communication, I think I was close enough to doing a Robotics minor. My goal? Writing code that doesn’t just run fast, but actually makes an impact in the community.`,
+  description: `I’m a CS & AI student at Plaksha University, focused on building software that turns research into real products. My work spans full-stack development, AI/ML systems, and low-level programming — I’ve shipped RAG-powered chatbots, trained lightweight deep learning models for edge deployment, and designed robotic grippers for underwater manipulation. I’m a C/C++ enthusiast currently building my own scripting language, and I care about writing code that doesn’t just run fast but actually makes an impact.`,
 
   accomplishments: [
     'Millennium Fellow - Millennium Campus Network × United Nations, 2024',
@@ -364,6 +363,42 @@ export const contact = {
     { label: 'GitHub', href: 'https://github.com/cherie-dips', icon: 'github' },
   ],
 };
+
+// ─── Experience ──────────────────────────────────────────────────────────────
+export const experiences = [
+  {
+    role: 'Research Intern',
+    organization: 'Indian School of Business (ISB)',
+    duration: 'June 2026 – July 2026',
+    description:
+      'Working on “Vulnerability to Climate Change in Rural India" under Prof. Ashwini Chhatre. Developing a multi-dimensional vulnerability profiling framework for ~7,000 rural blocks across India, integrating 30+ indicators across exposure, sensitivity, and adaptive capacity. Processing block-level datasets from satellite/remote sensing sources (CROPGRIDS, CHIRPS, CHIRTS, SoilGrids) and government surveys and conducting exploratory analysis to assess climate vulnerability across these units.',
+    tags: ['Research', 'Climate Science'],
+  },
+  {
+    role: 'Intern',
+    organization: 'Reimagining Higher Education Foundation, Plaksha University',
+    duration: 'Oct 2024 – May 2025',
+    description:
+      "Coordinated high-stake events like Founders' Day and Foundation Day at Plaksha University & conducted campus tours for founders, prospective students, and visitors. Researched and managed prospect donors list to support fundraising.",
+    tags: ['Event Management', 'Fundraising'],
+  },
+  {
+    role: 'Intern',
+    organization: 'Centre for Thinking, Language and Communication (CTLC), Plaksha University',
+    duration: 'Sep 2023 – May 2024',
+    description:
+      'Reviewed and synthesized scholarly literature to support academic research papers.',
+    tags: ['Research', 'Academic Writing'],
+  },
+  {
+    role: 'Intern',
+    organization: 'Action in Rural Technology and Service (ARTS), Srikakulam, Andhra Pradesh',
+    duration: 'June 2023 – July 2023',
+    description:
+      'Researched economic and financial literacy in rural and tribal Savara communities; developed a project enabling small business creation, loan access, and sustainable income generation using local resources.',
+    tags: ['Social Impact', 'Research'],
+  },
+];
 
 export const myProjects = [
   {
