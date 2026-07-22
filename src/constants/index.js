@@ -238,28 +238,13 @@ export const notesCategories = [
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
-        id: "discrete-maths",
-        name: "Discrete Maths",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "foundations-computer-systems",
-        name: "Foundations of Computer Systems",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "computer-networks",
-        name: "Computer Networks",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "operating-systems",
-        name: "Operating Systems",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
         id: "database-management-systems",
         name: "Database Management Systems",
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
+      },
+      {
+        id: "discrete-maths",
+        name: "Discrete Maths",
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
@@ -268,13 +253,28 @@ export const notesCategories = [
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
+        id: "foundations-computer-systems",
+        name: "Foundations of Computer Systems",
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
+      },
+      {
         id: "machine-learning",
         name: "Machine Learning",
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
+        id: "computer-networks",
+        name: "Computer Networks",
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
+      },
+      {
         id: "deep-learning",
         name: "Deep Learning",
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
+      },
+      {
+        id: "operating-systems",
+        name: "Operating Systems",
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
