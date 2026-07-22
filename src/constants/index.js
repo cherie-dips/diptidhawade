@@ -233,23 +233,13 @@ export const notesCategories = [
     subjectLabels: ["Machine Learning", "Deep Learning", "Design and Analysis of Algorithms", "Theory of Computation", "Foundations of Computer Systems", "Computer Networks", "Discrete Maths"],
     subjects: [
       {
-        id: "machine-learning",
-        name: "Machine Learning",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "deep-learning",
-        name: "Deep Learning",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
         id: "design-analysis-algorithms",
         name: "Design and Analysis of Algorithms",
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
-        id: "theory-of-computation",
-        name: "Theory of Computation",
+        id: "discrete-maths",
+        name: "Discrete Maths",
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
@@ -263,11 +253,6 @@ export const notesCategories = [
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
-        id: "discrete-maths",
-        name: "Discrete Maths",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
         id: "operating-systems",
         name: "Operating Systems",
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
@@ -275,6 +260,21 @@ export const notesCategories = [
       {
         id: "database-management-systems",
         name: "Database Management Systems",
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
+      },
+      {
+        id: "theory-of-computation",
+        name: "Theory of Computation",
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
+      },
+      {
+        id: "machine-learning",
+        name: "Machine Learning",
+        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
+      },
+      {
+        id: "deep-learning",
+        name: "Deep Learning",
         folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
       },
       {
