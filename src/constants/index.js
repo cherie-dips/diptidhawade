@@ -25,6 +25,7 @@ export const heroContent = {
 
 export const plakshaUniversityUrl = 'https://www.plaksha.edu.in';
 export const navBotWebsiteUrl = "https://navbot-web.onrender.com/";
+export const notesWebsiteUrl = "https://cherie-dips.github.io/SDE-Prep/#road";
 // ─── Travel Globe: cities (lat/lng, photos, emoji) ─────────────────────────
 export const cities = [
   {

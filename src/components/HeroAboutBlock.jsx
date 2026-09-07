@@ -1,4 +1,4 @@
-import { cvPdfUrl, navBotWebsiteUrl, plakshaUniversityUrl } from "../constants/index.js";
+import { cvPdfUrl, navBotWebsiteUrl, notesWebsiteUrl, plakshaUniversityUrl } from "../constants/index.js";
 import { assetUrl } from "../utils/assetUrl.js";
 
 const introText = (
@@ -6,7 +6,16 @@ const introText = (
     Hi there! I'm Dipti. I'm a CS & AI student at Plaksha University, building
     software across the stack — from AI powered web apps and edge-deployed deep
     learning models to systems programming and robotics. I like problems that sit
-    at the intersection of theory and product.
+    at the intersection of theory and product. I share my learnings through my{" "}
+    <a
+      href={notesWebsiteUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hero-inline-link"
+    >
+      notes
+    </a>
+    .
   </>
 );
 const getCvPdfHref = () => `${window.location.origin}${assetUrl(cvPdfUrl)}`;
@@ -56,6 +65,31 @@ export default function HeroAboutBlock() {
           </p>
           <span className="hero-about-featured-card-cta">Try NavBot →</span>
         </a>
+        <div className="hero-about-featured-card">
+          <span className="hero-about-featured-card-title">Notes</span>
+          <p className="hero-about-featured-card-desc">
+            I'm exploring systems programming, building my own
+            scripting language from scratch (Yes, I'm reading Robert
+            Nystrom's{" "}
+            <a
+              href="https://craftinginterpreters.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-inline-link"
+            >
+              Crafting Interpreters
+            </a>
+            ). Also, check out my notes on Discrete Maths, Data Structure, Algorithms, ML and more for some last-minute exam prep.
+          </p>
+          <a
+            href={notesWebsiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-about-featured-card-cta hero-about-featured-card-stretch"
+          >
+            Browse Notes →
+          </a>
+        </div>
       </div>
     </div>
   );
