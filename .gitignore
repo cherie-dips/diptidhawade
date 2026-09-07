@@ -15,12 +15,7 @@ dist-ssr
 .env.local
 .env.*.local
 
-# Supabase
-.supabase
-supabase/.temp
-
-# Local notes (if you keep PDFs here for reference)
-notes/
+interview-prep/
 
 # Editor directories and files
 .vscode/*

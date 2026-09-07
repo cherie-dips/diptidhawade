@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { FaGithub, FaGlobe } from "react-icons/fa";
 import { myProjects } from "../constants/index.js";
 import { assetUrl } from "../utils/assetUrl.js";
 import { getYoutubeEmbedSrc } from "../utils/youtubeEmbed.js";
@@ -29,6 +30,7 @@ export default function Projects() {
         {myProjects.map((project, i) => {
           const youtubeEmbed =
             !project.texture && getYoutubeEmbedSrc(project.spotlight);
+          const primaryHref = project.website || project.href;
           return (
           <div key={i} className="projects-item">
             <div className="projects-item-media-card">
@@ -69,7 +71,7 @@ export default function Projects() {
             </div>
             <div className="projects-item-body">
               <h3 className="projects-item-title">
-                <a href={project.href} target="_blank" rel="noopener noreferrer">
+                <a href={primaryHref} target="_blank" rel="noopener noreferrer">
                   {project.title}
                 </a>
               </h3>
@@ -92,18 +94,22 @@ export default function Projects() {
                   href={project.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="projects-item-view"
+                  className="projects-item-icon-link"
+                  aria-label={`${project.title} on GitHub`}
+                  title="View source on GitHub"
                 >
-                  Github
+                  <FaGithub aria-hidden />
                 </a>
                 {project.website && (
                   <a
                     href={project.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="projects-item-view"
+                    className="projects-item-icon-link"
+                    aria-label={`${project.title} website`}
+                    title="Visit website"
                   >
-                    Live Demo
+                    <FaGlobe aria-hidden />
                   </a>
                 )}
               </div>

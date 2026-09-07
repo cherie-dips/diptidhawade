@@ -15,24 +15,13 @@ const scrollToHero = () => {
 const NavItems = ({ onNavigate }) => {
   const location = useLocation();
   const basePath = BASE.replace(/\/$/, "");
-  const isNotesPage = location.pathname === basePath + "/notes" || location.pathname.startsWith(basePath + "/notes/");
   const isRoot = location.pathname === basePath || location.pathname === basePath + "/";
 
   return (
     <ul className="nav-ul">
-      {navLinks.map(({ id, hash, name, path }) => (
+      {navLinks.map(({ id, hash, name }) => (
         <li key={id} className="nav-li">
-          {path ? (
-            <Link
-              to={path}
-              className={`nav-li_a ${
-                (path === "/notes" && isNotesPage) ? "nav-li_a-active" : ""
-              }`}
-              onClick={onNavigate}
-            >
-              {name}
-            </Link>
-          ) : hash === "hero" ? (
+          {hash === "hero" ? (
             <Link
               to="/"
               className="nav-li_a"

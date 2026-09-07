@@ -124,10 +124,10 @@
   border: 1px solid var(--color-border);
 }
 
-/* Featured CTA cards (NavBot + Notes) */
+/* Featured CTA card (NavBot) */
 .hero-about-featured {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.25rem;
   margin-top: 3rem;
 }

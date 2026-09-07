@@ -1,8 +1,7 @@
 export const navLinks = [
   { id: 1, name: "Projects", hash: "projects" },
   { id: 2, name: "Experience", hash: "experience" },
-  { id: 3, name: "Notes", path: "/notes" },
-  { id: 4, name: "Contact", hash: "contact" },
+  { id: 3, name: "Contact", hash: "contact" },
 ];
 
 // CV PDF: place your cv.pdf in public/assets/cv.pdf
@@ -212,148 +211,6 @@ export const cities = [
   },
 ];
 
-// ─── Notes: four sections — PDFs from Supabase only, viewed in-app ───
-export const FOLDER_TYPES = ["Class Notes", "Tutorials/Assignments", "Exam Practice", "Past Papers"];
-export const FOLDER_SLUGS = {
-  "Class Notes": "class-notes",
-  "Tutorials/Assignments": "tutorials-assignments",
-  "Exam Practice": "exam-practice",
-  "Past Papers": "past-papers",
-};
-export const SLUG_TO_FOLDER = Object.fromEntries(
-  Object.entries(FOLDER_SLUGS).map(([name, slug]) => [slug, name])
-);
-
-export const notesCategories = [
-  {
-    id: "plaksha-university",
-    title: "Plaksha University | CSAI",
-    subheading: null,
-    image: "/assets/notes/plaksha.png",
-    subjectLabels: ["Machine Learning", "Deep Learning", "Design and Analysis of Algorithms", "Theory of Computation", "Foundations of Computer Systems", "Computer Networks", "Discrete Maths"],
-    subjects: [
-      {
-        id: "design-analysis-algorithms",
-        name: "Design and Analysis of Algorithms",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "database-management-systems",
-        name: "Database Management Systems",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "discrete-maths",
-        name: "Discrete Maths",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "theory-of-computation",
-        name: "Theory of Computation",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "foundations-computer-systems",
-        name: "Foundations of Computer Systems",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "machine-learning",
-        name: "Machine Learning",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "computer-networks",
-        name: "Computer Networks",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "deep-learning",
-        name: "Deep Learning",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "operating-systems",
-        name: "Operating Systems",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "Reinforcement Learning",
-        name: "Reinforcement Learning",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      }
-    ],
-  },
-  {
-    id: "software-development",
-    title: "Software Development",
-    subheading: null,
-    image: "/assets/notes/software-dev.png",
-    subjectLabels: ["React.js", "MERN Stack", "JavaScript", "System Design"],
-    subjects: [
-      {
-        id: "react-js",
-        name: "React.js",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "mern-stack",
-        name: "MERN Stack",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "javascript",
-        name: "JavaScript",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "system-design",
-        name: "System Design",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-    ],
-  },
-  {
-    id: "gate",
-    title: "GATE | CSE",
-    subheading: null,
-    image: "/assets/notes/gate.png",
-    subjectLabels: ["C Programming", "Mathematics", "DSA", "Computer Organization", "Operating Systems", "Databases"],
-    subjects: [
-      {
-        id: "c-programming",
-        name: "C Programming",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "mathematics",
-        name: "Mathematics",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "dsa",
-        name: "DSA",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "computer-organization",
-        name: "Computer Organization",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "operating-systems",
-        name: "Operating Systems",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-      {
-        id: "databases",
-        name: "Databases",
-        folders: { "Class Notes": [], "Tutorials/Assignments": [], "Exam Practice": [], "Past Papers": [] },
-      },
-    ],
-  },
-];
-
 // ─── Contact ───────────────────────────────────────────
 // Each link can have icon: 'linkedin' | 'github' | 'email' for logo display
 export const contact = {
@@ -439,6 +296,7 @@ export const myProjects = [
       'Uses the fin-ray effect (inspired by ray-finned fish bone structure) for passive, load-distributing grasps. Designed and 3D printed in TPU/SLA, exploring worm-follower and rack-and-pinion actuation mechanisms for improved range and precision. 🏆 3rd Place — SP Dutt Award For Innovation and Impact',
     href: 'https://github.com/cherie-dips/gripping-underwater',
     spotlight: 'https://www.youtube.com/watch?v=HWLXG5a1gso',
+    website: 'https://cherie-dips.github.io/gripping-underwater/',
     tags: [
       {
         id: 1,
