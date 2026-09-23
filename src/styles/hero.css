@@ -71,6 +71,37 @@
   flex-wrap: wrap;
 }
 
+.hero-about-v2-socials {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-right: 0.3rem;
+}
+
+.hero-about-v2-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-muted);
+  color: var(--color-text-muted);
+  font-size: 1.15rem;
+  line-height: 1;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+/* Two classes (0,2,0) to beat the global `a:hover` (0,1,1) in index.css. */
+.hero-about-v2-social-link:hover,
+.hero-about-v2-social-link:focus-visible {
+  border-color: var(--color-text);
+  color: var(--color-text);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
 .hero-about-v2-cta {
   display: inline-flex;
   align-items: center;

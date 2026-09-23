@@ -1,5 +1,22 @@
-import { cvPdfUrl, navBotWebsiteUrl, notesWebsiteUrl, plakshaUniversityUrl } from "../constants/index.js";
+import { FaGithub } from "react-icons/fa";
+import { SiCodechef, SiLeetcode } from "react-icons/si";
+
+import {
+  codechefUrl,
+  cvPdfUrl,
+  githubUrl,
+  leetcodeUrl,
+  navBotWebsiteUrl,
+  notesWebsiteUrl,
+  plakshaUniversityUrl,
+} from "../constants/index.js";
 import { assetUrl } from "../utils/assetUrl.js";
+
+const socialLinks = [
+  { label: "LeetCode", href: leetcodeUrl, Icon: SiLeetcode },
+  { label: "CodeChef", href: codechefUrl, Icon: SiCodechef },
+  { label: "GitHub", href: githubUrl, Icon: FaGithub },
+];
 
 const introText = (
   <>
@@ -33,6 +50,21 @@ export default function HeroAboutBlock() {
             {introText}
           </p>
           <div className="hero-about-v2-cta-row">
+            <div className="hero-about-v2-socials">
+              {socialLinks.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  title={label}
+                  className="hero-about-v2-social-link"
+                >
+                  <Icon aria-hidden="true" />
+                </a>
+              ))}
+            </div>
             <a
               href={getCvPdfHref()}
               target="_blank"
