@@ -29,7 +29,7 @@ export const notesWebsiteUrl = "https://cherie-dips.github.io/SDE-Prep/#road";
 export const leetcodeUrl = "https://leetcode.com/u/LBQ7IYa12g/";
 export const codechefUrl = "https://www.codechef.com/users/plaksha_cc_23";
 export const githubUrl = "https://github.com/cherie-dips";
-// ─── Travel Globe: cities (lat/lng, photos, emoji) ─────────────────────────
+// ─── Travel Globe: cities (lat/lng, emoji) ─────────────────────────────────
 export const cities = [
   {
     id: "london",
@@ -37,11 +37,6 @@ export const cities = [
     country: "UK",
     lat: 51.5074,
     lng: -0.1278,
-    photos: [
-      "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&q=80",
-      "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=600&q=80",
-      "https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=600&q=80",
-    ],
     emoji: "🎡",
   },
   {
@@ -50,11 +45,6 @@ export const cities = [
     country: "Scotland",
     lat: 55.9533,
     lng: -3.1883,
-    photos: [
-      "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&q=80",
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
-      "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&q=80",
-    ],
     emoji: "🏰",
   },
   {
@@ -63,11 +53,6 @@ export const cities = [
     country: "UK",
     lat: 51.752,
     lng: -1.2577,
-    photos: [
-      "https://images.unsplash.com/photo-1580933073521-dc49ac0d4e6a?w=600&q=80",
-      "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=600&q=80",
-      "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=600&q=80",
-    ],
     emoji: "🎓",
   },
   {
@@ -76,11 +61,6 @@ export const cities = [
     country: "UK",
     lat: 50.8225,
     lng: -0.1372,
-    photos: [
-      "https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&q=80",
-      "https://images.unsplash.com/photo-1558618047-f4e60cde8811?w=600&q=80",
-      "https://images.unsplash.com/photo-1596394723269-b2cbca4e6313?w=600&q=80",
-    ],
     emoji: "🎠",
   },
   {
@@ -89,11 +69,6 @@ export const cities = [
     country: "India",
     lat: 28.5355,
     lng: 77.391,
-    photos: [
-      "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&q=80",
-      "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80",
-      "https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=600&q=80",
-    ],
     emoji: "🏙️",
   },
   {
@@ -102,11 +77,6 @@ export const cities = [
     country: "India",
     lat: 30.7333,
     lng: 76.7794,
-    photos: [
-      "https://images.unsplash.com/photo-1617195737496-bc30194e3a19?w=600&q=80",
-      "https://images.unsplash.com/photo-1624367407685-7f3d7c6f9f62?w=600&q=80",
-      "https://images.unsplash.com/photo-1626015365107-39ea66c87f21?w=600&q=80",
-    ],
     emoji: "🌹",
   },
   {
@@ -115,11 +85,6 @@ export const cities = [
     country: "India",
     lat: 18.5204,
     lng: 73.8567,
-    photos: [
-      "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?w=600&q=80",
-      "https://images.unsplash.com/photo-1601314002592-b8734bca6604?w=600&q=80",
-      "https://images.unsplash.com/photo-1590766940554-b8ad5be21018?w=600&q=80",
-    ],
     emoji: "🏯",
   },
   {
@@ -128,11 +93,6 @@ export const cities = [
     country: "India",
     lat: 15.2993,
     lng: 74.124,
-    photos: [
-      "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80",
-      "https://images.unsplash.com/photo-1614082242765-7c98ca0f3df3?w=600&q=80",
-      "https://images.unsplash.com/photo-1582972236019-ea4af5ffe587?w=600&q=80",
-    ],
     emoji: "🏖️",
   },
   {
@@ -141,11 +101,6 @@ export const cities = [
     country: "India",
     lat: 12.9716,
     lng: 77.5946,
-    photos: [
-      "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=600&q=80",
-      "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=600&q=80",
-      "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=600&q=80",
-    ],
     emoji: "🌿",
   },
   {
@@ -154,11 +109,6 @@ export const cities = [
     country: "India",
     lat: 30.3165,
     lng: 78.0322,
-    photos: [
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
-      "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=600&q=80",
-      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
-    ],
     emoji: "🏔️",
   },
   {
@@ -167,25 +117,15 @@ export const cities = [
     country: "India",
     lat: 18.2949,
     lng: 83.8938,
-    photos: [
-      "https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=600&q=80",
-      "https://images.unsplash.com/photo-1559628233-100c798642d8?w=600&q=80",
-      "https://images.unsplash.com/photo-1604928141064-207cea6f571f?w=600&q=80",
-    ],
     emoji: "🌊",
   },
   {
-    id: "jaipur",
-    name: "Jaipur",
+    id: "hyderabad",
+    name: "Hyderabad",
     country: "India",
-    lat: 26.9124,
-    lng: 75.7873,
-    photos: [
-      "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=600&q=80",
-      "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&q=80",
-      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=80",
-    ],
-    emoji: "🏰",
+    lat: 17.385,
+    lng: 78.4867,
+    emoji: "🕌",
   },
   {
     id: "mumbai",
@@ -193,11 +133,6 @@ export const cities = [
     country: "India",
     lat: 19.076,
     lng: 72.8777,
-    photos: [
-      "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?w=600&q=80",
-      "https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=600&q=80",
-      "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=600&q=80",
-    ],
     emoji: "🌆",
   },
   {
@@ -206,11 +141,6 @@ export const cities = [
     country: "India",
     lat: 22.5726,
     lng: 88.3639,
-    photos: [
-      "https://images.unsplash.com/photo-1558431382-27e303142255?w=600&q=80",
-      "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&q=80",
-      "https://images.unsplash.com/photo-1574958269340-fa927503f3dd?w=600&q=80",
-    ],
     emoji: "🌉",
   },
 ];
@@ -232,8 +162,8 @@ export const experiences = [
     organization: 'Indian School of Business (ISB)',
     duration: 'June 2026 – July 2026',
     description:
-      'Working on “Vulnerability to Climate Change in Rural India" under Prof. Ashwini Chhatre. Developing a multi-dimensional vulnerability profiling framework for ~7,000 rural blocks across India, integrating 30+ indicators across exposure, sensitivity, and adaptive capacity. Processing block-level datasets from satellite/remote sensing sources (CROPGRIDS, CHIRPS, CHIRTS, SoilGrids) and government surveys and conducting exploratory analysis to assess climate vulnerability across these units.',
-    tags: ['Research', 'Climate Science'],
+      'Developed a multi-dimensional vulnerability profiling framework for ~7,000 rural blocks across India, integrating 30+ indicators across exposure, sensitivity, and adaptive capacity under Prof. Ashwini Chhatre. Processed block-level datasets from satellite/remote sensing sources (CROPGRIDS, CHIRPS, CHIRTS, SoilGrids) and government surveys to assess climate vulnerability across these units.',
+    tags: ['Python', 'Google Earth Engine', 'Data Analysis'],
   },
   {
     role: 'Intern',
@@ -297,7 +227,7 @@ export const myProjects = [
     title: 'Grippers for Underwater Manipulation',
     desc: 'Designed and prototyped a general-purpose underwater gripper capable of grasping spherical, rigid, delicate, and slippery objects — addressing key challenges like water drag, surface slippage, and buoyancy.',
     subdesc:
-      'Uses the fin-ray effect (inspired by ray-finned fish bone structure) for passive, load-distributing grasps. Designed and 3D printed in TPU/SLA, exploring worm-follower and rack-and-pinion actuation mechanisms for improved range and precision. 🏆 3rd Place — SP Dutt Award For Innovation and Impact',
+      'Uses the fin-ray effect (inspired by ray-finned fish bone structure) for passive, load-distributing grasps. Designed and 3D printed in TPU/SLA, exploring worm-follower and rack-and-pinion actuation mechanisms for improved range and precision.\n🏆 3rd Place — SP Dutt Award For Innovation and Impact',
     href: 'https://github.com/cherie-dips/gripping-underwater',
     spotlight: 'https://www.youtube.com/watch?v=HWLXG5a1gso',
     website: 'https://cherie-dips.github.io/gripping-underwater/',
@@ -341,13 +271,13 @@ export const myProjects = [
     ],
   },
   {
-    title: 'NoteScanner - RAG-Powered Notes Assistant',
-    desc: 'NoteScanner uploads course materials, indexes them in ChromaDB, and uses Sarvam AI: Document Intelligence (Sarvam Vision) for PDF/image OCR and Chat Completions (`sarvam-30b` / `sarvam-105b`) for note-grounded Q&A, flashcards, MCQs, and mind maps. It features a FastAPI backend and a React/Vite frontend, orchestrated with Docker Compose.',
+    title: 'Goal-Oriented Semantic Communication in Bandwidth-Constrained MARL',
+    desc: 'An implementation of the Model-Based Dual-Policy (MBDP) algorithm (Su, Du & Deng, IEEE ICC 2025 Workshop), where cooperating agents learn both how to act and which semantic features to transmit to teammates under a wireless channel\'s byte budget. Evaluated on Cooperative Landmark Coverage and a custom continuous Predator-Prey environment, each trained for 150k episodes.',
     subdesc:
-      'You upload your handwritten notes → the system scans, organizes, and lets you chat with your notes using Retrieval-Augmented Generation (RAG).',
-    href: 'https://github.com/cherie-dips/NoteScanner',
-    spotlight: '/assets/projects/note-scanner.png',
-    website: 'https://cherie-dips.github.io/NoteScanner/',
+      'Each agent pairs a Bernoulli feature-mask communication policy with a navigation policy, trained with PPO + GAE and Lagrangian relaxation. On landmark coverage, MBDP beats no-comm, random, and cyclic baselines with 12.6% better reward while sending 34% fewer bytes.',
+    href: 'https://github.com/Tanu-adhikari/MARL-Environment',
+    spotlight: '/assets/projects/marl-predator-prey.gif',
+    website: 'https://tanu-adhikari.github.io/MARL-Environment/',
     tags: [
       {
         id: 1,
@@ -356,18 +286,13 @@ export const myProjects = [
       },
       {
         id: 2,
-        name: 'FastAPI',
+        name: 'PyTorch',
         path: 'assets/tailwindcss.png',
       },
       {
         id: 3,
-        name: 'React',
+        name: 'Multi-Agent RL',
         path: '/assets/typescript.png',
-      },
-      {
-        id: 4,
-        name: 'Docker',
-        path: '/assets/framer.png',
       },
     ],
   },

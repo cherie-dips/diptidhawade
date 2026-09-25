@@ -1,7 +1,23 @@
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { FiMinus, FiPlus, FiRotateCcw } from "react-icons/fi";
 import { cities as CITIES } from "../constants/index.js";
+import { assetUrl } from "../utils/assetUrl.js";
 import "../styles/travelglobe.css";
+
+// ─── Tuning ───────────────────────────────────────────────────────────────────
+const FOV = 40;
+const ZOOM_DEFAULT = 3.6; // camera distance from the globe centre (globe radius = 1)
+const ZOOM_FOCUS = 2.9; // distance used when flying to a city (globe just fills the frame)
+const ZOOM_MIN = 1.45;
+const ZOOM_MAX = 5;
+const TILT_LIMIT = 1.2; // radians
+const HOME_VIEW = { lat: 32, lng: 40 }; // between the UK and India
+const LAND_DOT_STEP = 1.1; // degrees between land dots
+const IDLE_SPIN_DELAY = 4000; // ms of inactivity before the globe starts spinning
+const SPIN_SPEED = 0.00009; // radians per ms
+const PICK_RADIUS = { mouse: 16, touch: 26 }; // px around a pin that counts as a hit
+const DRAG_THRESHOLD = 5; // px of movement before a press becomes a drag
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function latLngToVec3(lat, lng, radius = 1) {
@@ -14,582 +30,652 @@ function latLngToVec3(lat, lng, radius = 1) {
   );
 }
 
-function createArcPoints(start, end, segments = 60) {
+// Globe rotation that brings (lat, lng) to face the camera.
+function viewFor(lat, lng) {
+  const p = latLngToVec3(lat, lng);
+  return { x: THREE.MathUtils.degToRad(lat), y: Math.atan2(-p.x, p.z) };
+}
+
+// `to`, shifted by whole turns so it is the closest equivalent angle to `from`.
+function nearestAngle(from, to) {
+  return from + Math.atan2(Math.sin(to - from), Math.cos(to - from));
+}
+
+// Arc height scales with distance so short hops stay close to the surface.
+function createArcPoints(start, end, segments = 64) {
+  const height = Math.min(0.32, start.angleTo(end) * 0.42) + 0.004;
   const pts = [];
   for (let i = 0; i <= segments; i++) {
     const t = i / segments;
     const p = new THREE.Vector3().lerpVectors(start, end, t);
-    p.normalize().multiplyScalar(1 + Math.sin(Math.PI * t) * 0.35);
+    p.normalize().multiplyScalar(1.006 + Math.sin(Math.PI * t) * height);
     pts.push(p);
   }
   return pts;
 }
 
-const CARD_W = 220;
-const CARD_H = 200;
-const ZOOM_MIN = 1.2;
-const ZOOM_MAX = 9;
+// Samples the land mask (white = land) on an even lat/lng grid.
+function buildLandDots(image, step) {
+  const canvas = document.createElement("canvas");
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(image, 0, 0);
+  const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  const positions = [];
+  for (let lat = -90 + step / 2; lat < 90; lat += step) {
+    const count = Math.max(1, Math.floor((360 * Math.cos(THREE.MathUtils.degToRad(lat))) / step));
+    const y = Math.min(height - 1, Math.floor(((90 - lat) / 180) * height));
+    for (let j = 0; j < count; j++) {
+      const lng = -180 + ((j + 0.5) * 360) / count;
+      const x = Math.min(width - 1, Math.floor(((lng + 180) / 360) * width));
+      if (data[(y * width + x) * 4] > 127) {
+        const v = latLngToVec3(lat, lng, 1.003);
+        positions.push(v.x, v.y, v.z);
+      }
+    }
+  }
+  return new Float32Array(positions);
+}
+
+// Globe colours live in travelglobe.css so they follow the light/dark theme.
+function readThemeColors(el) {
+  const css = getComputedStyle(el);
+  const get = (name) => css.getPropertyValue(name).trim();
+  return {
+    sphere: get("--globe-sphere"),
+    rim: get("--globe-rim"),
+    land: get("--globe-land"),
+    landOpacity: parseFloat(get("--globe-land-opacity")) || 0.6,
+    pin: get("--globe-pin"),
+    arc: get("--globe-arc"),
+  };
+}
+
+// ─── Shaders ──────────────────────────────────────────────────────────────────
+const SPHERE_VERTEX = /* glsl */ `
+  varying vec3 vNormal;
+  varying vec3 vViewDir;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vNormal = normalize(normalMatrix * normal);
+    vViewDir = normalize(-mv.xyz);
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+
+const SPHERE_FRAGMENT = /* glsl */ `
+  uniform vec3 uColor;
+  uniform vec3 uRim;
+  varying vec3 vNormal;
+  varying vec3 vViewDir;
+  void main() {
+    float light = dot(vNormal, normalize(vec3(-0.35, 0.55, 0.75))) * 0.5 + 0.5;
+    vec3 color = uColor * mix(0.82, 1.08, light);
+    float rim = pow(1.0 - max(dot(vNormal, vViewDir), 0.0), 3.0);
+    gl_FragColor = vec4(mix(color, uRim, rim * 0.85), 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
+const LAND_VERTEX = /* glsl */ `
+  uniform float uSize;
+  uniform float uPixelRatio;
+  uniform float uRefDepth;
+  varying float vFacing;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vec3 n = normalize(normalMatrix * normalize(position));
+    vFacing = dot(n, normalize(-mv.xyz));
+    // Grow dots a little slower than the zoom so close-ups stay delicate.
+    gl_PointSize = uSize * uPixelRatio * pow(uRefDepth / -mv.z, 0.7);
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+
+const LAND_FRAGMENT = /* glsl */ `
+  uniform vec3 uColor;
+  uniform float uOpacity;
+  varying float vFacing;
+  void main() {
+    float d = length(gl_PointCoord - 0.5);
+    if (d > 0.5) discard;
+    float alpha = smoothstep(0.5, 0.3, d) * smoothstep(0.0, 0.45, vFacing) * uOpacity;
+    gl_FragColor = vec4(uColor, alpha);
+    #include <colorspace_fragment>
+  }
+`;
+
+const PIN_VERTEX = /* glsl */ `
+  attribute float aState;
+  attribute float aPhase;
+  uniform float uSize;
+  uniform float uPixelRatio;
+  varying float vState;
+  varying float vPhase;
+  varying float vFacing;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vec3 n = normalize(normalMatrix * normalize(position));
+    vFacing = dot(n, normalize(-mv.xyz));
+    vState = aState;
+    vPhase = aPhase;
+    gl_PointSize = uSize * uPixelRatio;
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+
+const PIN_FRAGMENT = /* glsl */ `
+  uniform vec3 uColor;
+  uniform float uTime;
+  varying float vState; // 0 idle, 1 hovered, 2 selected
+  varying float vPhase;
+  varying float vFacing;
+  void main() {
+    float d = length(gl_PointCoord - 0.5) * 2.0;
+    if (d > 1.0) discard;
+    float lit = step(0.5, vState);
+    float coreR = mix(0.17, 0.25, lit);
+    float core = 1.0 - smoothstep(coreR - 0.05, coreR, d);
+    float centre = (1.0 - smoothstep(0.06, 0.1, d)) * step(1.5, vState);
+    float halo = exp(-d * d * 9.0) * mix(0.35, 0.55, lit);
+    float t = fract(uTime * 0.45 + vPhase);
+    float ringR = coreR + t * (0.95 - coreR);
+    float ring = (1.0 - smoothstep(0.0, 0.07, abs(d - ringR))) * (1.0 - t) * mix(0.55, 0.9, lit);
+    float alpha = max(max(core, halo), ring) * smoothstep(0.0, 0.25, vFacing);
+    vec3 color = mix(uColor, vec3(1.0), centre);
+    gl_FragColor = vec4(color, alpha);
+    #include <colorspace_fragment>
+  }
+`;
+
+const ARC_VERTEX = /* glsl */ `
+  attribute float aT;
+  attribute float aOffset;
+  varying float vT;
+  varying float vOffset;
+  void main() {
+    vT = aT;
+    vOffset = aOffset;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const ARC_FRAGMENT = /* glsl */ `
+  uniform vec3 uColor;
+  uniform float uTime;
+  varying float vT;
+  varying float vOffset;
+  void main() {
+    // A light pulse travels along each arc, leaving a short trail.
+    float head = fract(uTime * 0.2 + vOffset) * 1.5 - 0.25;
+    float behind = head - vT;
+    float trail = behind >= 0.0 ? exp(-behind * 6.0) : 0.0;
+    gl_FragColor = vec4(uColor, 0.35 + trail * 0.65);
+    #include <colorspace_fragment>
+  }
+`;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function TravelGlobe() {
+  const rootRef = useRef(null);
   const mountRef = useRef(null);
-  const worldSectionRef = useRef(null);
-  const rendererRef = useRef(null);
-  const cameraRef = useRef(null);
-  const globeRef = useRef(null);
-  const markersRef = useRef([]);
-  const arcsRef = useRef([]);
-  const frameRef = useRef(null);
+  const labelRef = useRef(null);
+  // Imperative controls (select / zoom / reset) exposed by the scene effect.
+  const apiRef = useRef(null);
 
-  // Interaction refs (no re-render needed)
-  const isDragging = useRef(false);
-  const dragMoved = useRef(false);
-  const prevMouse = useRef({ x: 0, y: 0 });
-  const targetRot = useRef({ x: 0.3, y: 0 });
-  const currentRot = useRef({ x: 0.3, y: 0 });
-  const autoRotate = useRef(true);
-  const autoTimer = useRef(null);
-  const targetCamZ = useRef(3.2);
-  const currentCamZ = useRef(3.2);
+  const [selected, setSelected] = useState(null); // index into CITIES
+  const [hovered, setHovered] = useState(null);
 
-  // React state
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [cardScreenPos, setCardScreenPos] = useState(null); // {x, y}
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const [photoLoading, setPhotoLoading] = useState(false);
-  const [hoveredId, setHoveredId] = useState(null);
-
-  // Keep in refs for animation loop access
-  const selectedCityRef = useRef(null);
-  selectedCityRef.current = selectedCity;
-
-  // ── Scene setup ────────────────────────────────────────────────────────────
+  // ── Scene, animation loop and pointer handling ─────────────────────────────
   useEffect(() => {
-    const container = mountRef.current;
-    if (!container) return;
+    const root = rootRef.current;
+    const mount = mountRef.current;
+    const label = labelRef.current;
+    if (!root || !mount || !label) return;
 
-    const W = container.clientWidth;
-    const H = container.clientHeight;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(W, H);
     renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
+    const canvas = renderer.domElement;
+    mount.appendChild(canvas);
 
     const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
+    const globe = new THREE.Group();
+    scene.add(globe);
 
-    const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
-    camera.position.set(0, 0, 3.2);
-    cameraRef.current = camera;
+    const timeUniform = { value: 0 };
+    const pixelRatioUniform = { value: renderer.getPixelRatio() };
 
-    // Lights
-    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-    const dir = new THREE.DirectionalLight(0x88aaff, 1.2);
-    dir.position.set(5, 5, 5);
-    scene.add(dir);
-    const rim = new THREE.DirectionalLight(0xff8844, 0.3);
-    rim.position.set(-5, -2, -5);
-    scene.add(rim);
-
-    // Globe group
-    const globeGroup = new THREE.Group();
-    scene.add(globeGroup);
-    globeRef.current = globeGroup;
-
-    // Earth textures
-    const loader = new THREE.TextureLoader();
-    const earthTex = loader.load("https://raw.githubusercontent.com/turban/webgl-earth/master/images/2_no_clouds_4k.jpg");
-    const bumpTex  = loader.load("https://raw.githubusercontent.com/turban/webgl-earth/master/images/elev_bump_4k.jpg");
-    const specTex  = loader.load("https://raw.githubusercontent.com/turban/webgl-earth/master/images/water_4k.png");
-
-    globeGroup.add(new THREE.Mesh(
-      new THREE.SphereGeometry(1, 64, 64),
-      new THREE.MeshPhongMaterial({
-        map: earthTex, bumpMap: bumpTex, bumpScale: 0.05,
-        specularMap: specTex, specular: new THREE.Color(0x334466), shininess: 25,
-      })
-    ));
-
-    // Atmosphere
-    globeGroup.add(new THREE.Mesh(
-      new THREE.SphereGeometry(1.06, 64, 64),
-      new THREE.MeshPhongMaterial({ color: 0x4488ff, transparent: true, opacity: 0.08, side: THREE.FrontSide })
-    ));
-
-    // Stars
-    const starPos = new Float32Array(1500 * 3);
-    for (let i = 0; i < starPos.length; i++) starPos[i] = (Math.random() - 0.5) * 80;
-    const starGeo = new THREE.BufferGeometry();
-    starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
-    scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent: true, opacity: 0.6 })));
-
-    // City markers
-    CITIES.forEach((city) => {
-      const pos = latLngToVec3(city.lat, city.lng, 1.01);
-
-      const dot = new THREE.Mesh(
-        new THREE.SphereGeometry(0.018, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xff6644 })
-      );
-      dot.position.copy(pos);
-      dot.userData.cityId = city.id;
-      globeGroup.add(dot);
-
-      const ring = new THREE.Mesh(
-        new THREE.SphereGeometry(0.035, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xff8866, transparent: true, opacity: 0.3 })
-      );
-      ring.position.copy(pos);
-      globeGroup.add(ring);
-
-      markersRef.current.push({ dot, ring, city, pos });
+    // Base sphere
+    const sphereMat = new THREE.ShaderMaterial({
+      uniforms: { uColor: { value: new THREE.Color() }, uRim: { value: new THREE.Color() } },
+      vertexShader: SPHERE_VERTEX,
+      fragmentShader: SPHERE_FRAGMENT,
     });
+    globe.add(new THREE.Mesh(new THREE.SphereGeometry(1, 96, 64), sphereMat));
 
-    // Arcs
+    // Land dots, added once the mask has loaded
+    const landMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uColor: { value: new THREE.Color() },
+        uOpacity: { value: 0 },
+        uSize: { value: 2.3 },
+        uPixelRatio: pixelRatioUniform,
+        uRefDepth: { value: ZOOM_DEFAULT - 1 },
+      },
+      vertexShader: LAND_VERTEX,
+      fragmentShader: LAND_FRAGMENT,
+      transparent: true,
+      depthWrite: false,
+    });
+    const landGeo = new THREE.BufferGeometry();
+    let landOpacity = 0;
+    let disposed = false;
+    const mask = new Image();
+    mask.onload = () => {
+      if (disposed) return;
+      landGeo.setAttribute("position", new THREE.BufferAttribute(buildLandDots(mask, LAND_DOT_STEP), 3));
+      globe.add(new THREE.Points(landGeo, landMat));
+    };
+    mask.src = assetUrl("/assets/land-mask.png");
+
+    // Journey arcs between consecutive cities
+    const pinPositions = CITIES.map((c) => latLngToVec3(c.lat, c.lng, 1.012));
+    const arcMat = new THREE.ShaderMaterial({
+      uniforms: { uColor: { value: new THREE.Color() }, uTime: timeUniform },
+      vertexShader: ARC_VERTEX,
+      fragmentShader: ARC_FRAGMENT,
+      transparent: true,
+      depthWrite: false,
+    });
     for (let i = 0; i < CITIES.length - 1; i++) {
-      const a = latLngToVec3(CITIES[i].lat, CITIES[i].lng, 1.01);
-      const b = latLngToVec3(CITIES[i + 1].lat, CITIES[i + 1].lng, 1.01);
-      const arc = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(createArcPoints(a, b)),
-        new THREE.LineBasicMaterial({ color: 0xff7755, transparent: true, opacity: 0.4 })
-      );
-      globeGroup.add(arc);
-      arcsRef.current.push(arc);
+      const pts = createArcPoints(latLngToVec3(CITIES[i].lat, CITIES[i].lng), latLngToVec3(CITIES[i + 1].lat, CITIES[i + 1].lng));
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      geo.setAttribute("aT", new THREE.BufferAttribute(new Float32Array(pts.map((_, j) => j / (pts.length - 1))), 1));
+      geo.setAttribute("aOffset", new THREE.BufferAttribute(new Float32Array(pts.length).fill((i * 0.29) % 1), 1));
+      globe.add(new THREE.Line(geo, arcMat));
     }
 
-    // Animation loop
-    let t = 0;
-    const animate = () => {
-      frameRef.current = requestAnimationFrame(animate);
-      t += 0.01;
+    // City pins
+    const pinGeo = new THREE.BufferGeometry().setFromPoints(pinPositions);
+    const pinState = new THREE.BufferAttribute(new Float32Array(CITIES.length), 1);
+    pinGeo.setAttribute("aState", pinState);
+    pinGeo.setAttribute("aPhase", new THREE.BufferAttribute(new Float32Array(CITIES.map((_, i) => (i * 0.37) % 1)), 1));
+    const pinMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uColor: { value: new THREE.Color() },
+        uTime: timeUniform,
+        uSize: { value: 30 },
+        uPixelRatio: pixelRatioUniform,
+      },
+      vertexShader: PIN_VERTEX,
+      fragmentShader: PIN_FRAGMENT,
+      transparent: true,
+      depthWrite: false,
+    });
+    const pins = new THREE.Points(pinGeo, pinMat);
+    pins.renderOrder = 2;
+    globe.add(pins);
 
-      if (autoRotate.current) targetRot.current.y += 0.002;
+    // ── Theme ──
+    const applyTheme = () => {
+      const t = readThemeColors(root);
+      sphereMat.uniforms.uColor.value.set(t.sphere);
+      sphereMat.uniforms.uRim.value.set(t.rim);
+      landMat.uniforms.uColor.value.set(t.land);
+      landOpacity = t.landOpacity;
+      pinMat.uniforms.uColor.value.set(t.pin);
+      arcMat.uniforms.uColor.value.set(t.arc);
+    };
+    applyTheme();
+    const themeObserver = new MutationObserver(applyTheme);
+    themeObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
-      currentRot.current.x += (targetRot.current.x - currentRot.current.x) * 0.06;
-      currentRot.current.y += (targetRot.current.y - currentRot.current.y) * 0.06;
-      globeGroup.rotation.x = currentRot.current.x;
-      globeGroup.rotation.y = currentRot.current.y;
+    // ── Interaction state ──
+    const home = viewFor(HOME_VIEW.lat, HOME_VIEW.lng);
+    const s = {
+      rot: { ...home },
+      target: null, // rotation being flown to
+      vel: { x: 0, y: 0 }, // drag inertia, radians per ms
+      zoom: ZOOM_DEFAULT,
+      zoomTarget: ZOOM_DEFAULT,
+      drag: null,
+      pointer: null, // last pointer position while over the canvas
+      lastInteraction: performance.now(),
+      hovered: null,
+      selected: null,
+      appliedPins: "",
+      screen: CITIES.map(() => ({ x: 0, y: 0, visible: false })),
+      size: { w: 1, h: 1 },
+    };
 
-      // Smooth zoom
-      currentCamZ.current += (targetCamZ.current - currentCamZ.current) * 0.08;
-      camera.position.z = currentCamZ.current;
+    const clampTilt = (x) => THREE.MathUtils.clamp(x, -TILT_LIMIT, TILT_LIMIT);
+    const setZoom = (z) => {
+      s.zoomTarget = THREE.MathUtils.clamp(z, ZOOM_MIN, ZOOM_MAX);
+      s.lastInteraction = performance.now();
+    };
+    const flyTo = (view, zoom) => {
+      s.target = { x: clampTilt(view.x), y: nearestAngle(s.rot.y, view.y) };
+      s.vel.x = s.vel.y = 0;
+      setZoom(zoom);
+    };
+    const select = (i) => {
+      s.selected = i;
+      setSelected(i);
+      if (i === null) return;
+      const view = viewFor(CITIES[i].lat, CITIES[i].lng);
+      flyTo(view, Math.min(s.zoomTarget, ZOOM_FOCUS));
+    };
+    const setHover = (i) => {
+      if (s.hovered === i) return;
+      s.hovered = i;
+      setHovered(i);
+    };
 
-      // Pulse rings
-      markersRef.current.forEach(({ ring }, idx) => {
-        const p = 1 + 0.4 * Math.sin(t * 2 + idx);
-        ring.scale.setScalar(p);
-        ring.material.opacity = 0.12 + 0.15 * Math.sin(t * 2 + idx);
-      });
+    apiRef.current = {
+      select,
+      zoomBy: (factor) => setZoom(s.zoomTarget * factor),
+      reset: () => {
+        select(null);
+        flyTo(home, ZOOM_DEFAULT);
+      },
+    };
 
-      // Animate arc opacity
-      arcsRef.current.forEach((arc, idx) => {
-        arc.material.opacity = 0.2 + 0.2 * Math.sin(t + idx * 0.5);
-      });
+    // Drag speed that keeps the surface under the cursor at any zoom.
+    const radiansPerPixel = () =>
+      ((s.zoom - 1) * Math.tan(THREE.MathUtils.degToRad(FOV / 2))) / (s.size.h / 2);
 
-      // Update card screen position to track the selected city dot
-      const sel = selectedCityRef.current;
-      if (sel) {
-        const marker = markersRef.current.find(m => m.city.id === sel.id);
-        if (marker) {
-          // World position of the dot
-          const worldPos = marker.pos.clone().applyMatrix4(globeGroup.matrixWorld);
-          // Check if facing camera
-          const toCam = new THREE.Vector3(0, 0, 1);
-          const dotNormal = worldPos.clone().normalize();
-          const facing = dotNormal.dot(toCam);
+    const localPoint = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    };
 
-          if (facing > 0) {
-            // Project to NDC then to screen pixels
-            const ndc = worldPos.clone().project(camera);
-            const rect = container.getBoundingClientRect();
-            const sx = ((ndc.x + 1) / 2) * rect.width;
-            const sy = ((-ndc.y + 1) / 2) * rect.height;
-            setCardScreenPos({ x: sx, y: sy, visible: true });
-          } else {
-            setCardScreenPos(p => p ? { ...p, visible: false } : null);
-          }
+    // Nearest visible pin within `radius` px, measured in screen space.
+    const pick = (pt, radius) => {
+      let best = null;
+      let bestDist = radius * radius;
+      s.screen.forEach((p, i) => {
+        if (!p.visible) return;
+        const d = (p.x - pt.x) ** 2 + (p.y - pt.y) ** 2;
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
         }
+      });
+      return best;
+    };
+
+    const onPointerDown = (e) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      if (s.drag) return;
+      const pt = localPoint(e);
+      s.drag = { id: e.pointerId, x: pt.x, y: pt.y, startX: pt.x, startY: pt.y, t: e.timeStamp, moved: false };
+      s.target = null;
+      s.vel.x = s.vel.y = 0;
+      s.lastInteraction = performance.now();
+      canvas.setPointerCapture(e.pointerId);
+    };
+
+    const onPointerMove = (e) => {
+      const pt = localPoint(e);
+      s.pointer = { ...pt, type: e.pointerType };
+      const d = s.drag;
+      if (!d || d.id !== e.pointerId) return;
+      if (!d.moved) {
+        if (Math.hypot(pt.x - d.startX, pt.y - d.startY) < DRAG_THRESHOLD) return;
+        d.moved = true;
+        mount.classList.add("is-dragging");
+      }
+      const k = radiansPerPixel();
+      const spin = (pt.x - d.x) * k;
+      const tilt = (pt.y - d.y) * k;
+      s.rot.y += spin;
+      s.rot.x = clampTilt(s.rot.x + tilt);
+      const dt = Math.max(1, e.timeStamp - d.t);
+      s.vel.y = s.vel.y * 0.5 + (spin / dt) * 0.5;
+      s.vel.x = s.vel.x * 0.5 + (tilt / dt) * 0.5;
+      d.x = pt.x;
+      d.y = pt.y;
+      d.t = e.timeStamp;
+      s.lastInteraction = performance.now();
+    };
+
+    const endDrag = (e, cancelled) => {
+      const d = s.drag;
+      if (!d || d.id !== e.pointerId) return;
+      s.drag = null;
+      mount.classList.remove("is-dragging");
+      if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
+      s.lastInteraction = performance.now();
+      // Keep inertia only if the pointer was still moving when released.
+      if (d.moved && e.timeStamp - d.t < 80) return;
+      s.vel.x = s.vel.y = 0;
+      if (d.moved || cancelled) return;
+      const hit = pick(localPoint(e), e.pointerType === "mouse" ? PICK_RADIUS.mouse : PICK_RADIUS.touch);
+      if (hit !== null) select(hit);
+      else if (s.selected !== null) select(null);
+    };
+    const onPointerUp = (e) => endDrag(e, false);
+    const onPointerCancel = (e) => endDrag(e, true);
+    const onPointerLeave = () => {
+      if (s.drag) return;
+      s.pointer = null;
+      setHover(null);
+    };
+
+    // Plain scrolling keeps scrolling the page; pinch (ctrl + wheel) zooms.
+    const onWheel = (e) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      setZoom(s.zoomTarget * Math.exp(THREE.MathUtils.clamp(e.deltaY, -25, 25) * 0.01));
+    };
+    // Safari reports trackpad pinches as gesture events instead.
+    let gestureStartZoom = ZOOM_DEFAULT;
+    const onGestureStart = (e) => {
+      e.preventDefault();
+      gestureStartZoom = s.zoomTarget;
+    };
+    const onGestureChange = (e) => {
+      e.preventDefault();
+      setZoom(gestureStartZoom / e.scale);
+    };
+
+    canvas.addEventListener("pointerdown", onPointerDown);
+    canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointercancel", onPointerCancel);
+    canvas.addEventListener("pointerleave", onPointerLeave);
+    canvas.addEventListener("wheel", onWheel, { passive: false });
+    canvas.addEventListener("gesturestart", onGestureStart);
+    canvas.addEventListener("gesturechange", onGestureChange);
+
+    // ── Animation loop ──
+    const world = new THREE.Vector3();
+    const toCamera = new THREE.Vector3();
+    let raf = 0;
+    let last = performance.now();
+    let running = false;
+
+    const frame = (now) => {
+      raf = requestAnimationFrame(frame);
+      const dt = Math.min(64, now - last);
+      last = now;
+      if (!reducedMotion) timeUniform.value += dt / 1000;
+
+      if (!s.drag) {
+        if (s.target) {
+          const f = 1 - Math.exp(-dt / 160);
+          s.rot.x += (s.target.x - s.rot.x) * f;
+          s.rot.y += (s.target.y - s.rot.y) * f;
+          if (Math.abs(s.target.x - s.rot.x) + Math.abs(s.target.y - s.rot.y) < 1e-4) s.target = null;
+        } else if (Math.abs(s.vel.x) + Math.abs(s.vel.y) > 1e-6) {
+          s.rot.y += s.vel.y * dt;
+          s.rot.x = clampTilt(s.rot.x + s.vel.x * dt);
+          const decay = Math.exp(-dt / 320);
+          s.vel.x *= decay;
+          s.vel.y *= decay;
+        } else if (
+          !reducedMotion &&
+          s.selected === null &&
+          !s.pointer &&
+          now - s.lastInteraction > IDLE_SPIN_DELAY
+        ) {
+          s.rot.y += SPIN_SPEED * dt;
+        }
+      }
+      s.zoom += (s.zoomTarget - s.zoom) * (1 - Math.exp(-dt / 140));
+
+      globe.rotation.set(s.rot.x, s.rot.y, 0);
+      camera.position.set(0, 0, s.zoom);
+      globe.updateMatrixWorld();
+      camera.updateMatrixWorld();
+
+      const lo = landMat.uniforms.uOpacity;
+      lo.value += (landOpacity - lo.value) * (1 - Math.exp(-dt / 300));
+
+      // Screen positions of pins, for picking and the label
+      pinPositions.forEach((p, i) => {
+        world.copy(p).applyMatrix4(globe.matrixWorld);
+        const visible = world.dot(toCamera.copy(camera.position).sub(world)) > 0.02;
+        world.project(camera);
+        const sp = s.screen[i];
+        sp.x = ((world.x + 1) / 2) * s.size.w;
+        sp.y = ((1 - world.y) / 2) * s.size.h;
+        sp.visible = visible;
+      });
+
+      if (s.pointer && s.pointer.type === "mouse" && !s.drag) setHover(pick(s.pointer, PICK_RADIUS.mouse));
+      mount.classList.toggle("is-over-pin", s.hovered !== null && !s.drag);
+
+      const pinKey = `${s.hovered}|${s.selected}`;
+      if (pinKey !== s.appliedPins) {
+        s.appliedPins = pinKey;
+        for (let i = 0; i < CITIES.length; i++) {
+          pinState.array[i] = i === s.selected ? 2 : i === s.hovered ? 1 : 0;
+        }
+        pinState.needsUpdate = true;
+      }
+
+      // Label the hovered pin, otherwise the selected one
+      const labelled = s.hovered !== null ? s.hovered : s.selected;
+      const hp = labelled !== null ? s.screen[labelled] : null;
+      if (hp && hp.visible) {
+        label.style.transform = `translate3d(${hp.x}px, ${hp.y}px, 0)`;
+        label.classList.add("is-visible");
+      } else {
+        label.classList.remove("is-visible");
       }
 
       renderer.render(scene, camera);
     };
-    animate();
 
-    // Resize handler
-    const onResize = () => {
-      const W2 = container.clientWidth;
-      const H2 = container.clientHeight;
-      renderer.setSize(W2, H2);
-      camera.aspect = W2 / H2;
-      camera.updateProjectionMatrix();
+    const start = () => {
+      if (running) return;
+      running = true;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
     };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(frameRef.current);
-      window.removeEventListener("resize", onResize);
-      renderer.dispose();
-      if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
-    };
-  }, []);
-
-  // ── Interaction handlers ───────────────────────────────────────────────────
-  useEffect(() => {
-    const container = mountRef.current;
-    if (!container) return;
-
-    const resetAutoRotate = () => {
-      autoRotate.current = false;
-      clearTimeout(autoTimer.current);
-      autoTimer.current = setTimeout(() => { autoRotate.current = true; }, 3000);
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
     };
 
-    // Zoom via scroll wheel
-    const onWheel = (e) => {
-      e.preventDefault();
-      resetAutoRotate();
-      const delta = e.deltaY > 0 ? 0.3 : -0.3;
-      targetCamZ.current = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetCamZ.current + delta));
-    };
-
-    const onMouseDown = (e) => {
-      isDragging.current = true;
-      dragMoved.current = false;
-      autoRotate.current = false;
-      prevMouse.current = { x: e.clientX, y: e.clientY };
-      container.style.cursor = "grabbing";
-    };
-
-    const onMouseMove = (e) => {
-      if (isDragging.current) {
-        const dx = e.clientX - prevMouse.current.x;
-        const dy = e.clientY - prevMouse.current.y;
-        if (Math.abs(dx) > 2 || Math.abs(dy) > 2) dragMoved.current = true;
-        targetRot.current.y += dx * 0.005;
-        targetRot.current.x = Math.max(-1.2, Math.min(1.2, targetRot.current.x + dy * 0.005));
-        prevMouse.current = { x: e.clientX, y: e.clientY };
-        return;
-      }
-      // Hover raycasting
-      const rect = container.getBoundingClientRect();
-      const mouse = new THREE.Vector2(
-        ((e.clientX - rect.left) / rect.width) * 2 - 1,
-        -((e.clientY - rect.top) / rect.height) * 2 + 1
-      );
-      const rc = new THREE.Raycaster();
-      rc.setFromCamera(mouse, cameraRef.current);
-      const hits = rc.intersectObjects(markersRef.current.map(m => m.dot));
-      if (hits.length > 0) {
-        setHoveredId(hits[0].object.userData.cityId);
-        container.style.cursor = "pointer";
-      } else {
-        setHoveredId(null);
-        container.style.cursor = "grab";
-      }
-    };
-
-    const onMouseUp = (e) => {
-      container.style.cursor = "grab";
-      const wasDrag = dragMoved.current;
-      isDragging.current = false;
-      dragMoved.current = false;
-      resetAutoRotate();
-      if (wasDrag) return;
-
-      // Click → open city card
-      const rect = container.getBoundingClientRect();
-      const mouse = new THREE.Vector2(
-        ((e.clientX - rect.left) / rect.width) * 2 - 1,
-        -((e.clientY - rect.top) / rect.height) * 2 + 1
-      );
-      const rc = new THREE.Raycaster();
-      rc.setFromCamera(mouse, cameraRef.current);
-      const hits = rc.intersectObjects(markersRef.current.map(m => m.dot));
-      if (hits.length > 0) {
-        const city = CITIES.find(c => c.id === hits[0].object.userData.cityId);
-        setSelectedCity(city);
-        setPhotoIndex(0);
-        setPhotoLoading(true);
-      } else {
-        setSelectedCity(null);
-        setCardScreenPos(null);
-      }
-    };
-
-    // Touch
-    const onTouchStart = (e) => {
-      isDragging.current = true;
-      dragMoved.current = false;
-      autoRotate.current = false;
-      prevMouse.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    };
-    const onTouchMove = (e) => {
-      const dx = e.touches[0].clientX - prevMouse.current.x;
-      const dy = e.touches[0].clientY - prevMouse.current.y;
-      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragMoved.current = true;
-      targetRot.current.y += dx * 0.005;
-      targetRot.current.x = Math.max(-1.2, Math.min(1.2, targetRot.current.x + dy * 0.005));
-      prevMouse.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    };
-    const onTouchEnd = () => {
-      isDragging.current = false;
-      resetAutoRotate();
-    };
-
-    container.addEventListener("wheel", onWheel, { passive: false });
-    container.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-    container.addEventListener("touchstart", onTouchStart, { passive: true });
-    container.addEventListener("touchmove", onTouchMove, { passive: true });
-    container.addEventListener("touchend", onTouchEnd);
-
-    return () => {
-      container.removeEventListener("wheel", onWheel);
-      container.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-      container.removeEventListener("touchstart", onTouchStart);
-      container.removeEventListener("touchmove", onTouchMove);
-      container.removeEventListener("touchend", onTouchEnd);
-      clearTimeout(autoTimer.current);
-    };
-  }, []);
-
-  // Update marker colours
-  useEffect(() => {
-    markersRef.current.forEach(({ dot, city }) => {
-      const isSel = selectedCity?.id === city.id;
-      const isHov = hoveredId === city.id;
-      dot.material.color.set(isSel ? 0xffdd44 : isHov ? 0xff9966 : 0xff6644);
-      dot.scale.setScalar(isSel ? 1.9 : isHov ? 1.4 : 1);
+    // Only animate while the globe is on screen.
+    const visibility = new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop()), {
+      rootMargin: "100px",
     });
-  }, [selectedCity, hoveredId]);
+    visibility.observe(mount);
 
-  // Compute clamped card position (keep card within world square section, in foreground)
-  const computeCardStyle = () => {
-    if (!cardScreenPos || !mountRef.current) return null;
-    const canvasRect = mountRef.current.getBoundingClientRect();
-    const W = canvasRect.width;
-    const H = canvasRect.height;
-    const dotX = cardScreenPos.x;
-    const dotY = cardScreenPos.y;
+    const resize = () => {
+      const w = mount.clientWidth;
+      const h = mount.clientHeight;
+      if (!w || !h) return;
+      s.size = { w, h };
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      pixelRatioUniform.value = renderer.getPixelRatio();
+    };
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(mount);
+    resize();
 
-    // Default: open right of dot
-    let left = dotX + 14;
-    let top = dotY - CARD_H / 2;
+    return () => {
+      disposed = true;
+      stop();
+      visibility.disconnect();
+      resizeObserver.disconnect();
+      themeObserver.disconnect();
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      canvas.removeEventListener("pointermove", onPointerMove);
+      canvas.removeEventListener("pointerup", onPointerUp);
+      canvas.removeEventListener("pointercancel", onPointerCancel);
+      canvas.removeEventListener("pointerleave", onPointerLeave);
+      canvas.removeEventListener("wheel", onWheel);
+      canvas.removeEventListener("gesturestart", onGestureStart);
+      canvas.removeEventListener("gesturechange", onGestureChange);
+      mask.onload = null;
+      apiRef.current = null;
+      scene.traverse((obj) => obj.geometry?.dispose());
+      landGeo.dispose();
+      [sphereMat, landMat, arcMat, pinMat].forEach((m) => m.dispose());
+      renderer.dispose();
+      canvas.remove();
+    };
+  }, []);
 
-    // Clamp to world section bounds so photo card always stays inside the square
-    const pad = 20;
-    let minLeft = pad;
-    let maxLeft = W - CARD_W - pad;
-    let minTop = pad;
-    let maxTop = H - CARD_H - pad;
-    if (worldSectionRef.current) {
-      const sectionRect = worldSectionRef.current.getBoundingClientRect();
-      const innerLeft = sectionRect.left + 24;
-      const innerTop = sectionRect.top + 24;
-      const innerRight = sectionRect.right - 24;
-      const innerBottom = sectionRect.bottom - 24;
-      // Convert section bounds to canvas-relative (same origin as mountRef)
-      minLeft = Math.max(pad, innerLeft - canvasRect.left);
-      maxLeft = Math.min(W - CARD_W - pad, innerRight - canvasRect.left - CARD_W);
-      minTop = Math.max(pad, innerTop - canvasRect.top);
-      maxTop = Math.min(H - CARD_H - pad, innerBottom - canvasRect.top - CARD_H);
-    }
+  // Escape clears the selected city.
+  useEffect(() => {
+    if (selected === null) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") apiRef.current?.select(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selected]);
 
-    // Flip to left of dot if overflowing right
-    if (left > maxLeft) left = dotX - CARD_W - 14;
-    left = Math.max(minLeft, Math.min(maxLeft, left));
-    top = Math.max(minTop, Math.min(maxTop, top));
-
-    return { left, top };
-  };
-
-  const cardStyle = computeCardStyle();
-  const showCard = selectedCity && cardScreenPos?.visible !== false && cardStyle;
+  const labelIndex = hovered ?? selected;
+  const labelCity = labelIndex === null ? null : CITIES[labelIndex];
 
   return (
-    <section
-      ref={worldSectionRef}
-      id="travel"
-      className="travelglobe-world"
-      style={{
-        width: "min(50vw, 50vh)",
-        height: "min(50vw, 50vh)",
-        maxWidth: "min(50vw, 50vh, 420px)",
-        maxHeight: "min(50vw, 50vh, 420px)",
-        background: "radial-gradient(ellipse at 30% 40%, #0a0e1a 0%, #050709 70%)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: "12px",
-      }}
-    >
-      {/* Grid background */}
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: "linear-gradient(rgba(68,102,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(68,102,255,0.04) 1px, transparent 1px)",
-        backgroundSize: "60px 60px",
-        pointerEvents: "none",
-      }} />
+    <section ref={rootRef} id="travel" className="travelglobe" aria-label="Places I've been">
+      <div className="travelglobe-frame">
+        <div
+          ref={mountRef}
+          className="travelglobe-canvas"
+          role="img"
+          aria-label={`Interactive globe marking ${CITIES.length} places I've been`}
+        />
 
-      <div className="travelglobe-layout">
-      <div className="travelglobe-globe-col" style={{ position: "relative", zIndex: 2 }}>
-        <div className="travelglobe-canvas-wrap" ref={mountRef} />
+        <div ref={labelRef} className="travelglobe-label" aria-hidden="true">
+          {labelCity && (
+            <span>
+              {labelCity.name}
+              <small>{labelCity.country}</small>
+            </span>
+          )}
+        </div>
 
-        {/* Overlay card — in foreground, clamped to world square */}
-        {showCard && (
-          <div
-            className="travelglobe-card-overlay"
-            style={{
-              position: "absolute",
-              left: cardStyle.left,
-              top: cardStyle.top,
-              width: CARD_W,
-              pointerEvents: "auto",
-              animation: "cardIn 0.22s cubic-bezier(0.34,1.56,0.64,1) both",
-            }}
-          >
-            {/* Small connector line from dot to card */}
-            <div style={{
-              position: "absolute",
-              // Left side of card if card is to the right, right side if to the left
-              [cardStyle.left > cardScreenPos.x ? "left" : "right"]: "-14px",
-              top: "50%",
-              width: "14px",
-              height: "1px",
-              background: "rgba(255,119,85,0.45)",
-              transform: "translateY(-50%)",
-            }} />
+        <div className="travelglobe-controls">
+          <button type="button" className="travelglobe-control" onClick={() => apiRef.current?.zoomBy(0.8)} aria-label="Zoom in" title="Zoom in">
+            <FiPlus aria-hidden="true" />
+          </button>
+          <button type="button" className="travelglobe-control" onClick={() => apiRef.current?.zoomBy(1.25)} aria-label="Zoom out" title="Zoom out">
+            <FiMinus aria-hidden="true" />
+          </button>
+          <button type="button" className="travelglobe-control" onClick={() => apiRef.current?.reset()} aria-label="Reset view" title="Reset view">
+            <FiRotateCcw aria-hidden="true" />
+          </button>
+        </div>
 
-            <div
-              className="travelglobe-card-box"
-              style={{
-                background: "rgba(7, 9, 17, 0.93)",
-                borderRadius: "14px",
-                overflow: "hidden",
-                backdropFilter: "blur(18px)",
-                boxShadow: "0 12px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)",
-              }}
-            >
-
-              {/* Photo */}
-              <div style={{ position: "relative", width: "100%", height: "130px", overflow: "hidden" }}>
-                <img
-                  key={selectedCity.id + photoIndex}
-                  src={selectedCity.photos[photoIndex].startsWith("http") ? selectedCity.photos[photoIndex] : (import.meta.env.BASE_URL + selectedCity.photos[photoIndex])}
-                  alt={selectedCity.name}
-                  onLoad={() => setPhotoLoading(false)}
-                  style={{
-                    width: "100%", height: "100%", objectFit: "cover", display: "block",
-                    opacity: photoLoading ? 0 : 1,
-                    transition: "opacity 0.3s ease",
-                  }}
-                />
-
-                {/* Spinner while loading */}
-                {photoLoading && (
-                  <div style={{
-                    position: "absolute", inset: 0,
-                    background: "rgba(7,9,17,0.85)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    <div style={{
-                      width: "20px", height: "20px",
-                      border: "2px solid rgba(255,119,85,0.25)",
-                      borderTopColor: "#ff7755",
-                      borderRadius: "50%",
-                      animation: "spin 0.65s linear infinite",
-                    }} />
-                  </div>
-                )}
-
-                {/* Close button — top left */}
-                <button
-                  onClick={() => { setSelectedCity(null); setCardScreenPos(null); }}
-                  style={{
-                    position: "absolute", top: "7px", left: "7px",
-                    width: "20px", height: "20px",
-                    background: "rgba(0,0,0,0.6)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: "50%",
-                    color: "rgba(255,255,255,0.65)",
-                    fontSize: "10px",
-                    cursor: "pointer",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    padding: 0, lineHeight: 1,
-                    transition: "background 0.15s",
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = "rgba(220,60,40,0.65)"}
-                  onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.6)"}
-                >
-                  ✕
-                </button>
-
-                {/* Left / Right arrows — edges of photo, circular white style */}
-                <button
-                  type="button"
-                  className="travelglobe-photo-arrow travelglobe-photo-arrow-left"
-                  onClick={() => { setPhotoLoading(true); setPhotoIndex(i => (i - 1 + selectedCity.photos.length) % selectedCity.photos.length); }}
-                  aria-label="Previous photo"
-                >
-                  ‹
-                </button>
-                <button
-                  type="button"
-                  className="travelglobe-photo-arrow travelglobe-photo-arrow-right"
-                  onClick={() => { setPhotoLoading(true); setPhotoIndex(i => (i + 1) % selectedCity.photos.length); }}
-                  aria-label="Next photo"
-                >
-                  ›
-                </button>
-
-                {/* Photo dot indicators — bottom centre */}
-                <div style={{
-                  position: "absolute", bottom: "6px", left: "50%", transform: "translateX(-50%)",
-                  display: "flex", gap: "4px", alignItems: "center",
-                }}>
-                  {selectedCity.photos.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => { setPhotoLoading(true); setPhotoIndex(i); }}
-                      style={{
-                        width: i === photoIndex ? "14px" : "5px",
-                        height: "5px",
-                        borderRadius: "3px",
-                        background: i === photoIndex ? "#ff7755" : "rgba(255,255,255,0.35)",
-                        border: "none", cursor: "pointer", padding: 0,
-                        transition: "all 0.25s ease",
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* City info row */}
-              <div style={{ padding: "9px 12px 11px", display: "flex", alignItems: "center", gap: "7px" }}>
-                <span style={{ fontSize: "18px", lineHeight: 1 }}>{selectedCity.emoji}</span>
-                <div>
-                  <div className="travelglobe-card-city-name" style={{ fontFamily: "'Georgia', serif", fontSize: "13px", fontWeight: "400", lineHeight: 1.25 }}>
-                    {selectedCity.name}
-                  </div>
-                  <div className="travelglobe-card-country" style={{ fontFamily: "'Courier New', monospace", fontSize: "9px", letterSpacing: "2px", textTransform: "uppercase", marginTop: "1px" }}>
-                    {selectedCity.country}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
-      </div>
+
+      <p className="travelglobe-footer">Drag to spin · click a pin</p>
     </section>
   );
 }

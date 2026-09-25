@@ -21,8 +21,7 @@ const socialLinks = [
 const introText = (
   <>
     Hi there! I'm Dipti. I'm a CS & AI student at Plaksha University, building
-    software across the stack — from AI powered web apps and edge-deployed deep
-    learning models to systems programming and robotics. I like problems that sit
+    software across the stack — from AI powered web apps to systems programming and robotics. I like problems that sit
     at the intersection of theory and product. I share my learnings through my{" "}
     <a
       href={notesWebsiteUrl}
@@ -100,18 +99,16 @@ export default function HeroAboutBlock() {
         <div className="hero-about-featured-card">
           <span className="hero-about-featured-card-title">Notes</span>
           <p className="hero-about-featured-card-desc">
-            I'm exploring systems programming, building my own
-            scripting language from scratch (Yes, I'm reading Robert
-            Nystrom's{" "}
+            I'm currently building a{" "}
             <a
-              href="https://craftinginterpreters.com/"
+              href="https://github.com/cherie-dips/FileSystem"
               target="_blank"
               rel="noopener noreferrer"
               className="hero-inline-link"
             >
-              Crafting Interpreters
-            </a>
-            ). Also, check out my notes on Discrete Maths, Data Structure, Algorithms, ML and more for some last-minute exam prep.
+              concurrent file system
+            </a>{" "}
+            in C++. Also, check out my notes on Discrete Maths, Data Structure, Algorithms, ML and more for some last-minute exam prep.
           </p>
           <a
             href={notesWebsiteUrl}
