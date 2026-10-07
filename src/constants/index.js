@@ -250,6 +250,37 @@ export const myProjects = [
     ],
   },
   {
+    title: 'NoteScanner — AI Study Assistant for Your Own Notes',
+    desc: 'A study assistant that answers questions from your own notes — PDFs, handwritten photos, or OneNote pages — citing the exact file and page. It also generates flashcards, quizzes, summaries, and exam revision plans.',
+    subdesc:
+      'Notes are read with Sarvam Vision OCR, embedded into ChromaDB, and searched by meaning, with Sarvam AI writing cited answers and flagging anything beyond the notes. Supports spaced-repetition flashcards and 10 Indian languages.',
+    href: 'https://github.com/cherie-dips/NoteScanner',
+    website: 'https://cherie-dips.github.io/NoteScanner/',
+    spotlight: '/assets/projects/note-scanner.png',
+    tags: [
+      {
+        id: 1,
+        name: 'React',
+        path: '/assets/react.svg',
+      },
+      {
+        id: 2,
+        name: 'FastAPI',
+        path: 'assets/tailwindcss.png',
+      },
+      {
+        id: 3,
+        name: 'ChromaDB',
+        path: '/assets/typescript.png',
+      },
+      {
+        id: 4,
+        name: 'Sarvam AI',
+        path: '/assets/framer.png',
+      },
+    ],
+  },
+  {
     title: 'Mobile-Hi-SAM — Lightweight Text Segmentation',
     desc: 'A parameter-efficient hierarchical text segmentation model designed for edge deployment. Integrates MobileSAM\'s TinyViT encoder and Hi-SAM pipeline with a custom hierarchical decoder for word, line, and paragraph segmentation on the HierText dataset.',
     subdesc:
@@ -267,32 +298,6 @@ export const myProjects = [
         id: 2,
         name: 'PyTorch',
         path: 'assets/tailwindcss.png',
-      },
-    ],
-  },
-  {
-    title: 'Goal-Oriented Semantic Communication in Bandwidth-Constrained MARL',
-    desc: 'An implementation of the Model-Based Dual-Policy (MBDP) algorithm (Su, Du & Deng, IEEE ICC 2025 Workshop), where cooperating agents learn both how to act and which semantic features to transmit to teammates under a wireless channel\'s byte budget. Evaluated on Cooperative Landmark Coverage and a custom continuous Predator-Prey environment, each trained for 150k episodes.',
-    subdesc:
-      'Each agent pairs a Bernoulli feature-mask communication policy with a navigation policy, trained with PPO + GAE and Lagrangian relaxation. On landmark coverage, MBDP beats no-comm, random, and cyclic baselines with 12.6% better reward while sending 34% fewer bytes.',
-    href: 'https://github.com/Tanu-adhikari/MARL-Environment',
-    spotlight: '/assets/projects/marl-predator-prey.gif',
-    website: 'https://tanu-adhikari.github.io/MARL-Environment/',
-    tags: [
-      {
-        id: 1,
-        name: 'Python',
-        path: '/assets/react.svg',
-      },
-      {
-        id: 2,
-        name: 'PyTorch',
-        path: 'assets/tailwindcss.png',
-      },
-      {
-        id: 3,
-        name: 'Multi-Agent RL',
-        path: '/assets/typescript.png',
       },
     ],
   },
