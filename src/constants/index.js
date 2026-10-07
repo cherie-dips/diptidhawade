@@ -194,9 +194,9 @@ export const experiences = [
 export const myProjects = [
   {
     title: 'NavBot — Chatbot for Any Website',
-    desc: 'NavBot is an AI chatbot-as-a-service. Any website owner can add a smart Q&A chatbot to their site in under 5 minutes, no ML knowledge, no backend changes.',
+    desc: 'An AI chatbot-as-a-service that lets any website owner add a Q&A assistant to their site with a single script tag. NavBot crawls and indexes the site, then answers visitor questions by text or voice using only that site\'s content, with source links.',
     subdesc:
-      'NavBot crawls your website, indexes the content into a vector database, and gives you a chatbot that answers only from your site\'s content with source links.',
+      'An agentic RAG pipeline plans each question with Gemini, runs multi-query search over Pinecone, reranks results with a cross-encoder, and checks the live site when the index falls short. Owners get a dashboard with analytics, editable FAQs, and widget theming.',
     href: 'https://github.com/cherie-dips/NavBot',
     website: 'https://navbot-web.onrender.com/',
     spotlight: 'https://www.youtube.com/watch?v=dQ3EHuyKFAg',
@@ -208,12 +208,12 @@ export const myProjects = [
       },
       {
         id: 2,
-        name: 'ChromaDB',
+        name: 'Pinecone',
         path: 'assets/tailwindcss.png',
       },
       {
         id: 3,
-        name: 'Sarvam API',
+        name: 'Gemini',
         path: '/assets/typescript.png',
       },
       {
