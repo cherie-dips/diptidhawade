@@ -16,8 +16,8 @@
 
       gtag('config', 'G-C8NL8E03VQ');
     </script>
-    <script type="module" crossorigin src="/diptidhawade/assets/index-B4OOb8fd.js"></script>
-    <link rel="stylesheet" crossorigin href="/diptidhawade/assets/index-CroTgN8u.css">
+    <script type="module" crossorigin src="/diptidhawade/assets/index-BIW4ZStf.js"></script>
+    <link rel="stylesheet" crossorigin href="/diptidhawade/assets/index-CSgqwcOn.css">
   </head>
   <body>
     <div id="root"></div>
@@ -40,6 +40,20 @@
         }
       };
     </script>
+    <style>
+      /* The closed NavBot launcher is an invisible 360px-wide strip at z-index 9999, which swallowed
+         clicks on anything under the bottom-right corner (e.g. the globe's "Take the tour" button).
+         Let clicks through it; the launcher button and the open chat panel stay clickable. */
+      body > div[style*="z-index: 9999"] {
+        pointer-events: none !important;
+      }
+      body > div[style*="z-index: 9999"] > div[style*="pointer-events: auto"]:last-child {
+        pointer-events: none !important;
+      }
+      body > div[style*="z-index: 9999"] > div[style*="pointer-events: auto"]:last-child button {
+        pointer-events: auto;
+      }
+    </style>
     <script src="https://navbot-web.onrender.com/chat-widget.iife.js"></script>
   </body>
 </html>
