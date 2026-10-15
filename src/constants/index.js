@@ -250,13 +250,13 @@ export const myProjects = [
     ],
   },
   {
-    title: 'NoteScanner — AI Study Assistant for Your Own Notes',
-    desc: 'A study assistant that answers questions from your own notes — PDFs, handwritten photos, or OneNote pages — citing the exact file and page. It also generates flashcards, quizzes, summaries, and exam revision plans.',
+    title: 'Interview.ai — SDE Prep with an AI Study Assistant',
+    desc: 'An interview-prep platform with a 265-topic SDE roadmap (DSA, System Design, OS, CN, DBMS and more) paced into a personal calendar, plus course notes with an Ask AI tutor. Its Study AI tab answers questions from your own uploaded notes, including handwritten photos, citing the exact file and page.',
     subdesc:
-      'Notes are read with Sarvam Vision OCR, embedded into ChromaDB, and searched by meaning, with Sarvam AI writing cited answers and flagging anything beyond the notes. Supports spaced-repetition flashcards and 10 Indian languages.',
-    href: 'https://github.com/cherie-dips/NoteScanner',
-    website: 'https://cherie-dips.github.io/NoteScanner/',
-    spotlight: '/assets/projects/note-scanner.png',
+      'A LlamaIndex RAG pipeline reads notes with Sarvam Vision OCR, runs hybrid keyword and vector search in Neon Postgres (pgvector), reranks with a cross-encoder, and has Gemini write grounded answers in English or 10 Indian languages. It also generates flashcards, quizzes and exam revision plans with spaced repetition.',
+    href: 'https://github.com/cherie-dips/SDE-Prep',
+    website: 'https://cherie-dips.github.io/SDE-Prep/',
+    spotlight: '/assets/projects/interview-ai.png',
     tags: [
       {
         id: 1,
@@ -270,12 +270,43 @@ export const myProjects = [
       },
       {
         id: 3,
-        name: 'ChromaDB',
+        name: 'LlamaIndex',
         path: '/assets/typescript.png',
       },
       {
         id: 4,
-        name: 'Sarvam AI',
+        name: 'pgvector',
+        path: '/assets/framer.png',
+      },
+    ],
+  },
+  {
+    title: 'Flagzen — 3D Custom Merch Store',
+    desc: 'A full-stack store for custom-branded merchandise: shoppers rotate products in 3D, design them in a browser studio with logos, text and layers, and see the design projected onto the 3D model before ordering. Sellers upload glTF models, mark print spots, and get print-ready 300 DPI files with every order.',
+    subdesc:
+      'Built with React Three Fiber and Konva on a Node/Express and MongoDB backend, with Razorpay checkout (signature-verified webhooks, automatic refunds), Google sign-in, and optional Claude-powered design ideas. Deployed on Railway behind CI-gated deploys.',
+    href: 'https://github.com/cherie-dips/eCommerceSite',
+    website: 'https://ecommercesite-production-2842.up.railway.app',
+    spotlight: '/assets/projects/flagzen.png',
+    tags: [
+      {
+        id: 1,
+        name: 'React',
+        path: '/assets/react.svg',
+      },
+      {
+        id: 2,
+        name: 'Three.js',
+        path: 'assets/tailwindcss.png',
+      },
+      {
+        id: 3,
+        name: 'Node.js',
+        path: '/assets/typescript.png',
+      },
+      {
+        id: 4,
+        name: 'MongoDB',
         path: '/assets/framer.png',
       },
     ],
