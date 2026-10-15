@@ -1,0 +1,2 @@
+# Overleaf: compile this project with XeLaTeX
+$pdf_mode = 5;

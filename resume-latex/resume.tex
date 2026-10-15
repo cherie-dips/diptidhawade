@@ -1,0 +1,194 @@
+% Dipti Dhawade - Resume
+%
+% A LaTeX copy of Dipti_Resume.pdf (made in Canva), laid out to match it line for line.
+% Compile with XeLaTeX (on Overleaf the included latexmkrc selects it). The font is
+% Carlito, a free font with the same letter widths as Calibri, set with Canva's letter
+% spacing and no kerning so every line is as long as in the original.
+% pdfLaTeX also works but lines come out slightly shorter.
+%
+% How the layout works
+%   Every line sits at the same height as in the original: the first argument of \Line,
+%   \Bul and \Sect is that line's baseline, in points from the top of the page.
+%   \at{x}{...} puts text at x points from the left edge; \atr{x}{...} ends it at x.
+%   Inside a bullet, \newline marks where the original line breaks.
+% To edit: change the words in place. If a bullet gains or loses a line, shift the
+% baselines below it by 13.505bp per line (14.255bp in Leadership & Achievements).
+
+\documentclass{article}
+\usepackage[paperwidth=595.5bp,paperheight=842.25bp,margin=0bp]{geometry}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[sfdefault]{carlito}
+  \input{glyphtounicode}\pdfgentounicode=1 % copyable text for ATS
+  \newcommand{\realspace}{\space}
+  \newcommand{\notracking}{}
+\else
+  \usepackage{fontspec}
+  \setmainfont{Carlito}[Extension=.ttf, UprightFont=*-Regular, BoldFont=*-Bold,
+    ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic,
+    Kerning=Off, LetterSpace=1.0, WordSpace={1.04237,0,0}, Ligatures={TeX,NoCommon}]
+  \newcommand{\realspace}{\char32 } % a real space character, so ATS reads two words
+  \newcommand{\notracking}{\addfontfeature{LetterSpace=0}} % the name has no letter spacing
+\fi
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Dipti Dhawade - Resume},pdfauthor={Dipti Dhawade}}
+
+\definecolor{namecolor}{HTML}{007878}
+\definecolor{contact}{HTML}{1A1A1A}
+
+\pagestyle{empty}
+\setlength{\parindent}{0bp}
+\setlength{\parskip}{0bp}
+\setlength{\topskip}{0bp}
+\lineskiplimit=-\maxdimen
+\lineskip=0bp
+\hyphenpenalty=10000
+\frenchspacing % same space after . and : as between words, like Canva
+\exhyphenpenalty=10000
+
+% ---------- layout helpers ----------
+\renewcommand{\textbf}[1]{{\bfseries #1}} % no italic correction, which would add width
+\newcommand{\fs}[1]{\fontsize{#1bp}{0bp}\selectfont}
+\newcommand{\at}[2]{\rlap{\hspace*{#1bp}#2}}
+\newcommand{\atr}[2]{\rlap{\hspace*{#1bp}\llap{#2}}}
+\newcommand{\up}[2]{\raisebox{#1bp}{#2}}
+\newcommand{\ul}[1]{\setbox0\hbox{#1}\rlap{\rule[-1.48bp]{\wd0}{0.7bp}}\box0}
+\newcommand{\sups}[3]{\raisebox{#1bp}{\fs{#2}#3}} % superscript: raise, size, text
+\newcommand{\bdot}{\tikz[baseline=0bp]\fill (1.13bp,2.63bp) circle[radius=1.13bp];}
+\newcommand{\q}{\textquotesingle}
+\newcommand{\tl}{\raisebox{1.95bp}{\textasciitilde}} % Calibri's ~ sits higher than Carlito's
+
+\newdimen\cury
+% \Line{baseline}{content}: one line placed at an exact height
+\newcommand{\Line}[2]{%
+  \vskip\dimexpr #1bp-\cury\relax
+  \noindent{#2}\par
+  \global\cury=#1bp\relax}
+% \Bul[line pitch]{first baseline}{text x}{text}: a bullet point
+\newcommand{\Bul}[4][13.505]{%
+  \vskip\dimexpr #2bp-\cury-#1bp\relax
+  \begingroup
+  \baselineskip=#1bp\relax
+  \leftskip=#3bp\relax
+  \rightskip=0bp plus 1fil\relax
+  \parfillskip=0bp plus 1fil\relax
+  \noindent\llap{\makebox[9.5bp][l]{\bdot}}#4\par
+  \global\cury=\dimexpr #2bp+#1bp*\numexpr\prevgraf-1\relax\relax
+  \endgroup}
+% \Sect{baseline}{title x}{left rule width}{right rule x}{right rule width}{rule raise}{TITLE}
+\newcommand{\Sect}[7]{%
+  \Line{#1}{\at{13.5}{\rule[#6bp]{#3bp}{0.75bp}}%
+    \at{#2}{\fs{12}\textbf{#7}}%
+    \at{#4}{\rule[#6bp]{#5bp}{0.75bp}}}}
+% \Title{baseline}{x}{name}{stack}{date end x}{date raise}{date}
+\newcommand{\Title}[7]{%
+  \Line{#1}{\at{#2}{\fs{11}\textbf{#3} | #4}%
+    \atr{#5}{\up{#6}{\itshape #7}}}}
+% \Role{baseline}{x}{role}{date end x}{date raise}{date}
+\newcommand{\Role}[6]{%
+  \Line{#1}{\at{#2}{\fs{11}\textbf{#3}}%
+    \atr{#4}{\up{#5}{\itshape #6}}}}
+
+\begin{document}
+\fs{10}
+\noindent\hbox{}\par % anchor at the top edge
+
+% ================= HEADER =================
+\Line{39.96}{%
+  \at{17.1}{\color{namecolor}\fs{20}\notracking\textbf{DIPTI DHAWADE}}%
+  \at{519.30}{\up{-26.94}{\includegraphics[width=61.52bp,height=56.27bp]{images/logo.png}}}}
+\Line{62.41}{\color{contact}%
+  \at{17.9}{\up{-1.34}{+91 8421530421}}%
+  \at{96.3}{\tikz[baseline=0bp]\fill (1.5bp,2.21bp) circle[radius=1.5bp];}%
+  \at{106.8}{\fs{11}\ul{dipti.dhawade.ug23@plaksha.edu.in}}}
+\Line{85.93}{\color{contact}\fs{11}%
+  \at{16.25}{\up{-2.32}{\includegraphics[width=13.5bp,height=13.5bp]{images/linkedin.png}}}%
+  \at{33.8}{\href{https://www.linkedin.com/in/dipti-dhawade-927a29214/}{\ul{LinkedIn}}}%
+  \at{88.70}{\up{-3.69}{\includegraphics[width=18.76bp,height=18.76bp]{images/github.png}}}%
+  \at{110.5}{\href{https://github.com/cherie-dips}{\ul{GitHub}}}%
+  \at{159.78}{\up{-2.32}{\includegraphics[width=13.5bp,height=13.5bp]{images/globe.png}}}%
+  \at{176.4}{\up{0.12}{\href{https://cherie-dips.github.io/diptidhawade/}{\ul{Portfolio}}}}}
+
+% ================= EDUCATION =================
+\Sect{106.93}{265.5}{249.9}{328.6}{251.3}{3.405}{EDUCATION}
+\Line{122.59}{%
+  \at{16.4}{\fs{11}\textbf{BTech - Computer Science and Artificial Intelligence, Plaksha University}}%
+  \at{427.4}{\up{0.15}{8.58}}%
+  \atr{573.9}{\up{1.35}{\itshape 2027}}}
+\Line{137.54}{\fs{11}\bfseries
+  \at{16.25}{12}\at{27.62}{\sups{4.5}{6.6}{th\realspace}}\at{36.27}{- Jawahar Navodaya Vidyalaya\realspace}\at{180.98}{Ahmednagar}%
+  \mdseries\fs{10}%
+  \at{426.0}{\up{1.35}{96.4\%}}%
+  \atr{573.5}{\up{0.75}{\itshape 2021}}}
+\Line{153.12}{\fs{11}\bfseries
+  \at{16.25}{10}\at{27.62}{\sups{4.5}{6.6}{th\realspace}}\at{36.27}{- Jawahar Navodaya Vidyalaya\realspace}\at{180.98}{Ahmednagar}%
+  \mdseries\fs{10}%
+  \at{426.0}{\up{1.35}{96.2\%}}%
+  \atr{573.9}{\up{0.15}{\itshape 2019}}}
+
+% ================= PROJECTS =================
+\Sect{169.53}{269.5}{251.2}{324.3}{256.1}{2.705}{PROJECTS}
+
+\Title{185.23}{18.0}{NavBot}{TypeScript, React, Node.js, Express, PostgreSQL, Pinecone, Docker}{574.9}{1.40}{Jan 2026 - Present}
+\Bul{199.89}{36.1}{Built a \textbf{full-stack SaaS} that adds a \textbf{site-grounded AI chatbot} to any website with one script tag, as a \textbf{TypeScript monorepo} with a\newline
+  \textbf{React} dashboard, \textbf{Node.js/Express REST APIs}, \textbf{PostgreSQL} \& \textbf{OAuth}.}
+\Bul{226.90}{36.1}{Engineered a \textbf{Playwright crawler} with cron-based incremental re-indexing into \textbf{Pinecone} and an \textbf{agentic RAG pipeline} (\textbf{query}\newline
+  \textbf{planning, reranking, streaming}) scoring \textbf{4.8/5 groundedness} on \textbf{100 eval queries}.}
+
+\Title{257.81}{18.0}{Flagzen}{React, Node.js, Express, MongoDB, JWT, Razorpay, Three.js}{577.4}{2.15}{Nov 2025 - Oct 2026}
+\Bul{271.72}{38.5}{Built a \textbf{full-stack marketplace} for \textbf{custom-branded merch} where \textbf{users can customise the products} for their brands and sellers\newline
+  receive print-ready files with every order.}
+\Bul{298.73}{38.5}{Developed an \textbf{in-browser design studio} (\textbf{Konva, Three.js}) that \textbf{suggests layouts} from an uploaded logo, \textbf{previews products in 3D}.}
+\Bul{312.23}{38.5}{Engineered the \textbf{MERN backend} with \textbf{REST APIs}, \textbf{JWT/Google OAuth}, \textbf{role-based access for customers, sellers and admins}, and\newline
+  \textbf{Razorpay payments} with \textbf{HMAC-verified webhooks} and \textbf{auto-refunds.}}
+
+\Title{342.40}{18.0}{Interview.ai}{React, Python, FastAPI, Supabase, ChromaDB, Docker}{574.9}{0.10}{Sep 2025 - Sep 2026}
+\Bul{357.55}{35.0}{Built a \textbf{full-stack interview-prep platform} that turns scattered \textbf{SDE prep into a self paced 1-6 month plan}: a \textbf{265-topic roadmap}\newline
+  (\textbf{DSA, System Design, OS, etc.}), along with a \textbf{course-notes library} of \textbf{138 PDFs} in \textbf{Supabase Storage} with an \textbf{AI tutor} that \textbf{answers}\newline
+  \textbf{questions from the open PDF}, \textbf{cites the exact spot}, and makes \textbf{flashcards} and \textbf{quizzes} for revision.}
+\Bul{398.07}{35.0}{Designed the \textbf{RAG pipeline} (\textbf{OCR for handwritten notes, ChromaDB embeddings, LLM answers}) on a \textbf{FastAPI backend} in \textbf{Docker},\newline
+  \textbf{indexing each PDF} once into a library shared by all users.}
+
+\Title{428.23}{18.8}{Mobile-Hi-SAM}{Python, PyTorch}{579.2}{0.10}{Aug 2025 - Dec 2025}
+\Bul{443.38}{35.8}{Built an \textbf{edge-deployable} \textbf{text segmentation model} by replacing \textbf{Hi-SAM\q{}s 650M-parameter encoder} with \textbf{MobileSAM\q{}s TinyViT},\newline
+  plus a \textbf{custom adapter} and \textbf{word/line/paragraph decoder}.}
+\Bul{470.39}{35.8}{\textbf{Retained \tl{}62\% of Hi-SAM\q{}s panoptic quality} with only \textbf{12.6M parameters}, a \textbf{\tl{}98\% smaller model}.}
+
+% ================= EXPERIENCE =================
+\Sect{489.95}{265.4}{248.6}{331.8}{248.8}{2.725}{EXPERIENCE}
+
+\Role{506.41}{18.7}{Indian School of Business, Hyderabad - Research Intern}{577.0}{0.10}{Jun 2026 - Jul 2026}
+\Bul{520.06}{39.1}{Developed a \textbf{multi-dimensional climatic vulnerability model} for rural India using \textbf{geospatial}, \textbf{climate}, and \textbf{government survey}\newline
+  datasets, covering \tl{}7,000 blocks under Prof. Ashwini Chhatre.}
+\Bul{547.07}{39.1}{Python, Google Earth Engine (GEE), Data Analysis}
+
+\Role{563.73}{18.0}{Reimagining Higher Education Foundation, Plaksha University - Intern}{577.4}{0.10}{Oct 2024 \textendash{} May 2025}
+\Bul{578.89}{38.5}{\textbf{Coordinated high-stakes events} like Founders\q{} Day and Foundation Day at Plaksha University \& conducted campus tours for\newline
+  founders, prospective students, and visitors. Researched and managed prospect donors list to support \textbf{fundraising}.}
+
+% ================= SKILLS =================
+\Sect{609.60}{277.2}{262.6}{310.3}{270.3}{2.625}{SKILLS}
+\Bul{624.76}{27.6}{\textbf{Programming Languages}: C, C++, Python (PyTorch), SQL, JavaScript, TypeScript, HTML/CSS}
+\Bul{638.26}{27.6}{\textbf{Web and Backend:} React.js, Node.js, Express.js, FastAPI, REST APIs, JWT/OAuth}
+\Bul{651.77}{27.6}{\textbf{Data, AI \& Infrastructure:} PostgreSQL, MongoDB, Supabase, Pinecone, ChromaDB, RAG, Docker, GitHub Actions, Git}
+\Bul{665.27}{27.6}{\textbf{Core CS:} Data Structures \& Algorithms, OOP, Operating Systems, DBMS, Computer Networks}
+
+% ================= LEADERSHIP & ACHIEVEMENTS =================
+\Sect{683.34}{231.2}{214.3}{391.7}{188.9}{2.565}{LEADERSHIP \& ACHIEVEMENTS}
+\Bul[14.255]{697.63}{27.8}{\textbf{Won 3\hspace{0.11bp}\makebox[5.45bp][l]{\sups{4.51}{6}{rd}}\realspace place - SP Dutt Award for Innovation} for building a \textbf{soft robotic gripper} for \textbf{underwater manipulation}.}
+\Bul[14.255]{711.88}{27.8}{Member of the \textbf{DS Brar Centre for Girls and Women in STEM (GWiST),} Plaksha University. Promote gender equity in STEM through\newline
+  technical workshops and mentorship initiatives.}
+\Bul[14.255]{740.39}{27.8}{\textbf{Millennium Fellow 2024, MCN \& United Nations:} Led a social impact project aligned with SDG 8: Decent Work and Economic\newline
+  Growth empowering rural and tribal communities toward sustainable livelihoods.}
+\Bul[14.255]{768.90}{27.8}{\textbf{OxNet- Pembroke College, Oxford University (Sep 2020):} Selected for a competitive \textbf{English Language \& Literature} program;\newline
+  enhanced analytical writing and critical thinking skills.}
+\Bul[14.255]{797.41}{27.8}{\textbf{Vice Head Girl at Jawahar Navodaya Vidyalaya:} Successfully managed the boarding program, fostered a strong school community of\newline
+  \textbf{500 students} and ensured student safety and well-being.}
+\Bul[14.255]{825.92}{27.8}{Competed in \textbf{National Inter-School Sports \& Games} against participants from \textbf{600+ schools} across India.}
+
+\end{document}
