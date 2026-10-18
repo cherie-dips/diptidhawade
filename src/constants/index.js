@@ -25,7 +25,7 @@ export const heroContent = {
 
 export const plakshaUniversityUrl = 'https://www.plaksha.edu.in';
 export const navBotWebsiteUrl = "https://navbot-web.onrender.com/";
-export const notesWebsiteUrl = "https://cherie-dips.github.io/SDE-Prep/#road";
+export const notesWebsiteUrl = "https://cherie-dips.github.io/Interview.ai/#notes";
 export const leetcodeUrl = "https://leetcode.com/u/LBQ7IYa12g/";
 export const codechefUrl = "https://www.codechef.com/users/plaksha_cc_23";
 export const githubUrl = "https://github.com/cherie-dips";
@@ -254,8 +254,8 @@ export const myProjects = [
     desc: 'An interview-prep platform with a 265-topic SDE roadmap (DSA, System Design, OS, CN, DBMS and more) paced into a personal calendar, plus course notes with an Ask AI tutor. Its Study AI tab answers questions from your own uploaded notes, including handwritten photos, citing the exact file and page.',
     subdesc:
       'A LlamaIndex RAG pipeline reads notes with Sarvam Vision OCR, runs hybrid keyword and vector search in Neon Postgres (pgvector), reranks with a cross-encoder, and has Gemini write grounded answers in English or 10 Indian languages. It also generates flashcards, quizzes and exam revision plans with spaced repetition.',
-    href: 'https://github.com/cherie-dips/SDE-Prep',
-    website: 'https://cherie-dips.github.io/SDE-Prep/',
+    href: 'https://github.com/cherie-dips/Interview.ai',
+    website: 'https://cherie-dips.github.io/Interview.ai/',
     spotlight: '/assets/projects/interview-ai.png',
     tags: [
       {
