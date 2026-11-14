@@ -2,15 +2,10 @@ import { useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./sections/Navbar.jsx";
 import Hero from "./sections/Hero.jsx";
-import TravelGlobe from "./sections/Travelglobe.jsx";
 import Projects from "./sections/Projects.jsx";
 import Experience from "./sections/Experience.jsx";
 import Contact from "./sections/Contact.jsx";
 const BASE = import.meta.env.BASE_URL;
-
-const PageWrapper = ({ children }) => (
-  <div className="page-content">{children}</div>
-);
 
 const SECTION_IDS = ["hero", "projects", "experience", "contact"];
 
@@ -112,22 +107,13 @@ function HomeScrollPage() {
         <Hero />
       </div>
       <div id="projects">
-        <PageWrapper>
-          <Projects />
-        </PageWrapper>
+        <Projects />
       </div>
       <div id="experience">
-        <PageWrapper>
-          <Experience />
-        </PageWrapper>
+        <Experience />
       </div>
-      <div className="contact-globe-row page-content">
-        <div id="contact" className="contact-globe-col">
-          <Contact />
-        </div>
-        <div id="my-journey" className="contact-globe-col">
-          <TravelGlobe />
-        </div>
+      <div id="contact">
+        <Contact />
       </div>
     </>
   );
@@ -137,7 +123,7 @@ const App = () => {
   return (
     <Router basename={BASE.replace(/\/$/, "")}>
       <Navbar />
-      <main className="w-full min-w-0">
+      <main>
         <Routes>
           <Route path="/" element={<HomeScrollPage />} />
         </Routes>

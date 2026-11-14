@@ -334,7 +334,7 @@ export default function TravelGlobe() {
     };
     applyTheme();
     const themeObserver = new MutationObserver(applyTheme);
-    themeObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
     // ── Interaction state ──
     const home = viewFor(HOME_VIEW.lat, HOME_VIEW.lng);

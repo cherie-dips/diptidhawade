@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaExternalLinkAlt, FaGithub, FaPlay } from "react-icons/fa";
+import { FaPlay } from "react-icons/fa";
 import { assetUrl } from "../utils/assetUrl.js";
 import { cardImage, hasVideo } from "../utils/projects.js";
 import { getYoutubeEmbedSrc } from "../utils/youtubeEmbed.js";
@@ -8,10 +8,10 @@ const YOUTUBE_ALLOW =
   "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
 
 /**
- * Top of a tile. Images enlarge on click. Videos show their thumbnail with a play button and only
- * load the player (YouTube or the video file) when clicked, so the section stays light.
+ * The project's picture. Images enlarge on click. Videos show their thumbnail with a play button and
+ * only load the player (YouTube or the video file) when clicked, so the page stays light.
  */
-function TileMedia({ project, onExpandImage }) {
+function ProjectMedia({ project, name, onExpandImage }) {
   const [playing, setPlaying] = useState(false);
   const image = cardImage(project);
   const isVideo = hasVideo(project);
@@ -19,7 +19,7 @@ function TileMedia({ project, onExpandImage }) {
   if (isVideo && (playing || !image)) {
     const youtube = getYoutubeEmbedSrc(project.spotlight);
     return (
-      <div className="project-tile-media project-tile-media--video">
+      <div className="project-media project-media--playing">
         {project.texture ? (
           <video
             src={assetUrl(project.texture)}
@@ -34,7 +34,7 @@ function TileMedia({ project, onExpandImage }) {
         ) : (
           <iframe
             src={`${youtube}?autoplay=1&rel=0`}
-            title={`${project.title} — project video`}
+            title={`${name} — project video`}
             allow={YOUTUBE_ALLOW}
             allowFullScreen
           />
@@ -48,9 +48,9 @@ function TileMedia({ project, onExpandImage }) {
   return (
     <button
       type="button"
-      className={`project-tile-media${isVideo ? " project-tile-media--video" : ""}`}
-      onClick={() => (isVideo ? setPlaying(true) : onExpandImage(project.spotlight))}
-      aria-label={isVideo ? `Play the ${project.title} video` : `Enlarge the ${project.title} image`}
+      className="project-media"
+      onClick={() => (isVideo ? setPlaying(true) : onExpandImage(project.spotlight || image))}
+      aria-label={isVideo ? `Play the ${name} video` : `Enlarge the ${name} image`}
     >
       <img
         src={assetUrl(image)}
@@ -59,7 +59,7 @@ function TileMedia({ project, onExpandImage }) {
         style={project.thumbPosition ? { objectPosition: project.thumbPosition } : undefined}
       />
       {isVideo && (
-        <span className="project-tile-play" aria-hidden>
+        <span className="project-play" aria-hidden>
           <FaPlay />
         </span>
       )}
@@ -67,50 +67,38 @@ function TileMedia({ project, onExpandImage }) {
   );
 }
 
-/** One project tile: media, title, both descriptions, then code/site links and tags. */
-export default function ProjectCard({ project, onExpandImage }) {
-  const primaryHref = project.website || project.href;
+/**
+ * One project, with no frame around it: picture, categories (and award), name, what it is, both
+ * paragraphs, links and the stack. `slot` sets its size and place in the staggered layout.
+ */
+export default function ProjectCard({ project, slot, onExpandImage }) {
+  const [name, subtitle] = project.title.split(" — ");
+  const kicker = [...(project.categories ?? []), project.award].filter(Boolean).join(" · ");
+
   return (
-    <article className="project-tile">
-      <TileMedia project={project} onExpandImage={onExpandImage} />
+    <article className={`project project--${slot}`}>
+      <ProjectMedia project={project} name={name} onExpandImage={onExpandImage} />
 
-      <h3 className="project-tile-title">
-        <a href={primaryHref} target="_blank" rel="noopener noreferrer">
-          {project.title}
-        </a>
-      </h3>
-      <p className="project-tile-desc">{project.desc}</p>
-      {project.subdesc && <p className="project-tile-subdesc">{project.subdesc}</p>}
+      {kicker && <p className="project-kicker">{kicker}</p>}
+      <h3 className="project-title">{name}</h3>
+      {subtitle && <p className="project-sub">{subtitle}</p>}
+      <p className="project-desc">{project.desc}</p>
+      {project.subdesc && <p className="project-desc">{project.subdesc}</p>}
 
-      <div className="project-tile-footer">
-        <a
-          href={project.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="project-tile-btn"
-          title="View source on GitHub"
-        >
-          <FaGithub aria-hidden /> Code
-          <span className="project-tile-sr"> for {project.title}</span>
-        </a>
+      <div className="actions project-actions">
         {project.website && (
-          <a
-            href={project.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="project-tile-btn project-tile-btn--icon"
-            aria-label={`${project.title} website`}
-            title="Visit website"
-          >
-            <FaExternalLinkAlt aria-hidden />
+          <a className="tlink" href={project.website} target="_blank" rel="noopener noreferrer">
+            {project.websiteLabel ?? "Live"} ↗<span className="sr-only"> ({name})</span>
           </a>
         )}
-        {project.tags?.map((tag) => (
-          <span key={tag.id} className="project-tile-tag">
-            {tag.name}
-          </span>
-        ))}
+        {project.href && (
+          <a className="tlink" href={project.href} target="_blank" rel="noopener noreferrer">
+            Code ↗<span className="sr-only"> for {name}</span>
+          </a>
+        )}
       </div>
+
+      {project.tags?.length > 0 && <p className="stack project-stack">{project.tags.map((tag) => tag.name).join(" · ")}</p>}
     </article>
   );
 }

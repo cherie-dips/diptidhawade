@@ -1,186 +1,128 @@
-/* Navbar layout and visuals — uses .nav-ul, .nav-li, .nav-li_a, .nav-sidebar from index.css */
+/* Navbar: pinned to the top, same colour as the page, no border */
 
-.navbar-header {
-  position: fixed;
+.nav {
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 50;
-  background-color: var(--navbar-bg, #0a0607);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transition: background-color 0.3s ease;
 }
 
-body.theme-light .navbar-header {
-  background-color: var(--navbar-bg);
-}
-
-.navbar-inner {
+.nav-inner {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding-top: 1.25rem;
-  padding-bottom: 1.25rem;
+  gap: 28px;
+  height: var(--nav-h);
 }
 
-.navbar-inner.page-content {
-  max-width: var(--page-max-width);
+.nav-brand {
+  font: 400 26px/1 var(--f-display);
+  letter-spacing: var(--ls-display);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
   margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--page-padding-x);
-  padding-right: var(--page-padding-x);
 }
 
-@media (min-width: 640px) {
-  .navbar-inner.page-content {
-    padding-left: var(--page-padding-x-sm);
-    padding-right: var(--page-padding-x-sm);
-  }
+.nav-links a {
+  color: var(--text-2);
+  font-size: 15px;
+  transition: color 0.15s ease;
 }
 
-.navbar-name {
-  color: rgb(163 163 163);
-  font-weight: 700;
-  font-size: 1.25rem;
-  font-family: "Cardinal Classic", "Cormorant Garamond", Georgia, serif;
-  transition: color 0.2s;
+.nav-links a:hover {
+  color: var(--text);
 }
 
-.navbar-name:hover {
-  color: #fff;
-}
-
-body.theme-light .navbar-name {
-  color: #525252;
-}
-
-body.theme-light .navbar-name:hover {
-  color: #0a0a0a;
-}
-
-/* Light theme: nav section links (About, Projects, Contact) — grey so visible on white */
-body.theme-light .nav-li_a {
-  color: #525252;
-}
-body.theme-light .nav-li_a:hover,
-body.theme-light .nav-li_a:focus {
-  color: #0a0a0a;
-}
-
-.navbar-toggle {
-  color: rgb(163 163 163);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  display: none;
+.nav-end {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  min-width: 2.5rem;
-  min-height: 2.5rem;
-  -webkit-tap-highlight-color: transparent;
+  gap: 6px;
 }
 
-.navbar-toggle:hover {
-  color: #fff;
+.nav-end .pill {
+  margin-right: 4px;
 }
 
-body.theme-light .navbar-toggle:hover {
-  color: #0a0a0a;
+.nav-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.navbar-toggle:focus {
-  outline: none;
+.nav-icon:hover {
+  background: var(--tone);
+  color: var(--text);
 }
 
-@media (max-width: 639px) {
-  .navbar-toggle {
-    display: flex;
-  }
-}
-
-.navbar-toggle-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  flex-shrink: 0;
-}
-
-.navbar-desktop {
+.nav-menu-btn {
   display: none;
 }
 
-@media (min-width: 640px) {
-  .navbar-desktop {
-    display: flex;
-  }
-}
-
-.navbar-sidebar-open {
-  max-height: 100vh;
-  visibility: visible;
-}
-
-.navbar-sidebar-closed {
-  max-height: 0;
-  visibility: hidden;
-}
-
-/* Sidebar: below the header bar, full width, above page content */
-.navbar-header .nav-sidebar {
+/* Phone menu: a sheet under the bar with large serif links */
+.nav-sheet {
+  position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  background-color: var(--navbar-bg, #0a0607);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  padding-block: 8px 28px;
+  background: var(--bg);
+  box-shadow: 0 28px 40px -28px rgba(0, 0, 0, 0.35);
 }
 
-body.theme-light .navbar-header .nav-sidebar {
-  background-color: var(--navbar-bg);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.nav-sheet[hidden] {
+  display: none;
 }
 
-.navbar-sidebar-inner {
-  padding: 1.25rem;
+.nav-sheet-links {
+  display: grid;
+  gap: 6px;
 }
 
-.navbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.nav-sheet-links a {
+  font: 400 36px/1.2 var(--f-display);
+  letter-spacing: var(--ls-display);
+  color: var(--text);
 }
 
-.navbar-theme-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  color: rgb(163 163 163);
-  background: transparent;
-  transition: color 0.2s, background-color 0.2s;
+@media (max-width: 720px) {
+  .nav-inner {
+    gap: 10px;
+  }
+
+  .nav-brand {
+    font-size: 23px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-end {
+    margin-left: auto;
+  }
+
+  .nav-menu-btn {
+    display: inline-grid;
+  }
 }
 
-.navbar-theme-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-body.theme-light .navbar-theme-btn {
-  color: #525252;
-}
-
-body.theme-light .navbar-theme-btn:hover {
-  color: #0a0a0a;
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.navbar-theme-btn:focus {
-  outline: none;
-}
-
-.navbar-theme-btn svg {
-  width: 1.25rem;
-  height: 1.25rem;
+@media (min-width: 721px) {
+  .nav-sheet {
+    display: none;
+  }
 }

@@ -1,33 +1,42 @@
 import { experiences } from "../constants/index.js";
 import "../styles/experience.css";
 
+/** "June 2026 – July 2026" → "Jun – Jul 2026"; "Oct 2024 – May 2025" stays as is. */
+function shortDuration(duration) {
+  const match = duration.match(/^(\w+)\s+(\d{4})\s*[–-]\s*(\w+)\s+(\d{4})$/);
+  if (!match) return duration;
+  const [, fromMonth, fromYear, toMonth, toYear] = match;
+  const mon = (month) => month.slice(0, 3);
+  return fromYear === toYear
+    ? `${mon(fromMonth)} – ${mon(toMonth)} ${toYear}`
+    : `${mon(fromMonth)} ${fromYear} – ${mon(toMonth)} ${toYear}`;
+}
+
+const firstYear = Math.min(...experiences.map((exp) => Number(exp.duration.match(/\d{4}/)?.[0] ?? Infinity)));
+
+/** The one tonal band on the page: dates on the left, every other entry indented. */
 export default function Experience() {
   return (
-    <section className="experience-page">
-      <div className="experience-inner">
-        <h1 className="experience-title">Experience</h1>
+    <section className="experience" aria-labelledby="experience-title">
+      <div className="wrap grid12">
+        <h2 className="h-section experience-title" id="experience-title">
+          Experience
+        </h2>
+        {Number.isFinite(firstYear) && <p className="experience-note">Research and university roles since {firstYear}.</p>}
 
-        {experiences.map((exp, i) => (
-          <div key={i} className="experience-item">
-            <div className="experience-timeline">
-              <div className="experience-dot" />
-              {i < experiences.length - 1 && <div className="experience-line" />}
-            </div>
-            <div className="experience-item-body">
-              <span className="experience-duration">{exp.duration}</span>
-              <h3 className="experience-role">{exp.role}</h3>
-              <p className="experience-org">{exp.organization}</p>
-              <p className="experience-desc">{exp.description}</p>
-              {exp.tags?.length > 0 && (
-                <div className="experience-tags">
-                  {exp.tags.map((tag, j) => (
-                    <span key={j} className="experience-tag">{tag}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
+        <ol className="experience-list">
+          {experiences.map((exp) => (
+            <li key={`${exp.organization}-${exp.duration}`}>
+              <p className="experience-when">{shortDuration(exp.duration)}</p>
+              <div>
+                <h3 className="experience-role">{exp.role}</h3>
+                <p className="experience-org">{exp.organization}</p>
+                <p className="experience-desc">{exp.description}</p>
+                {exp.tags?.length > 0 && <p className="stack experience-stack">{exp.tags.join(" · ")}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );

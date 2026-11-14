@@ -1,12 +1,12 @@
 /* Travel globe — colours are read by Travelglobe.jsx, so the WebGL scene follows the theme */
 
 .travelglobe {
-  --globe-sphere: #0e1726;
-  --globe-rim: #2a4063;
-  --globe-land: #cfe0ff;
-  --globe-land-opacity: 0.62;
-  --globe-pin: #4c9dff;
-  --globe-arc: #6aaeff;
+  --globe-sphere: #e3ddd3;
+  --globe-rim: #b3a99b;
+  --globe-land: #222222;
+  --globe-land-opacity: 0.5;
+  --globe-pin: #e0296b;
+  --globe-arc: #ff3d81;
 
   width: min(100%, 440px);
   display: flex;
@@ -14,13 +14,13 @@
   gap: 0.75rem;
 }
 
-body.theme-light .travelglobe {
-  --globe-sphere: #edf3fc;
-  --globe-rim: #bcd0ee;
-  --globe-land: #1f3a66;
-  --globe-land-opacity: 0.55;
-  --globe-pin: #2563eb;
-  --globe-arc: #2563eb;
+:root[data-theme="dark"] .travelglobe {
+  --globe-sphere: #2a2623;
+  --globe-rim: #5a5048;
+  --globe-land: #ece6dc;
+  --globe-land-opacity: 0.5;
+  --globe-pin: #ff3d81;
+  --globe-arc: #ff3d81;
 }
 
 .travelglobe-frame {
@@ -80,8 +80,8 @@ body.theme-light .travelglobe {
   transform: translate(-50%, calc(-100% - 14px));
   padding: 0.28rem 0.65rem;
   border-radius: 999px;
-  background: var(--color-text);
-  color: var(--color-bg);
+  background: var(--text);
+  color: var(--bg);
   font-size: 0.78rem;
   font-weight: 500;
   white-space: nowrap;
@@ -112,9 +112,9 @@ body.theme-light .travelglobe {
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  border: 1px solid var(--color-border-muted);
-  background: color-mix(in srgb, var(--color-bg) 75%, transparent);
-  color: var(--color-text-muted);
+  border: 0;
+  background: color-mix(in srgb, var(--tone) 85%, transparent);
+  color: var(--text-2);
   font-size: 0.95rem;
   cursor: pointer;
   backdrop-filter: blur(6px);
@@ -123,8 +123,7 @@ body.theme-light .travelglobe {
 
 .travelglobe-control:hover,
 .travelglobe-control:focus-visible {
-  color: var(--color-text);
-  border-color: var(--color-text);
+  color: var(--text);
   transform: translateY(-1px);
 }
 
@@ -132,7 +131,8 @@ body.theme-light .travelglobe {
 .travelglobe-footer {
   margin: 0;
   padding: 0 0.25rem;
-  font-size: 0.8rem;
   text-align: center;
-  color: var(--color-text-dim);
+  font-family: var(--f-mono);
+  font-size: 0.75rem;
+  color: var(--text-3);
 }

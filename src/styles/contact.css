@@ -1,99 +1,154 @@
-/* Contact page — minimalist, left-aligned with navbar (Dipti) */
+/* Contact: a very large statement; the globe overlaps the band above and runs off the edge */
 
-.contact-page {
-  padding-top: 8rem;
-  padding-bottom: 4rem;
+.contact {
+  position: relative;
+  padding-top: 180px;
 }
 
-.contact-inner {
-  text-align: left;
+.contact-grid {
+  position: relative;
+  z-index: 1;
 }
 
-.contact-title {
-  font-size: clamp(1.75rem, 4vw, 2.25rem);
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-  margin-bottom: 0.5rem;
+.contact-talk {
+  grid-column: 1 / 9;
+  margin: 0;
+  font: 400 clamp(72px, 11vw, 160px) / 0.88 var(--f-display);
+  letter-spacing: var(--ls-display);
+  color: var(--text);
 }
 
-.contact-intro {
-  font-size: 0.9375rem;
+.contact-talk em {
+  color: var(--pop);
+}
+
+.contact-text {
+  grid-column: 2 / 7;
+  margin: 36px 0 0;
+  font-size: 18.5px;
   line-height: 1.6;
-  color: var(--color-text-muted);
-  max-width: 32rem;
-  margin-bottom: 2rem;
+  color: var(--text-2);
 }
 
-.contact-block {
-  margin-bottom: 2rem;
+.contact-email-row {
+  grid-column: 2 / 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 18px;
+  margin-top: 26px;
 }
 
-.contact-block:last-child {
-  margin-bottom: 0;
+.contact-email {
+  min-width: 0;
+  font: 400 clamp(26px, 3.4vw, 46px) / 1.15 var(--f-display);
+  letter-spacing: -0.01em;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 8px;
+  overflow-wrap: anywhere;
 }
 
-.contact-label {
-  font-size: 0.8125rem;
-  color: var(--color-text-dim);
-  margin-bottom: 0.75rem;
+.contact-email:hover {
+  text-decoration-thickness: 4px;
+}
+
+.contact-copy {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  font: 500 12.5px/1.4 var(--f-mono);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+  cursor: pointer;
+}
+
+.contact-copy:hover {
+  color: var(--text);
 }
 
 .contact-links {
+  grid-column: 2 / 10;
+  margin-top: 30px;
+  font-size: 15px;
+}
+
+/* The interactive globe, placed over the bottom of the Experience band */
+.contact-globe {
+  position: absolute;
+  z-index: 0;
+  top: -150px;
+  right: -64px;
+  width: clamp(300px, 34vw, 500px);
+}
+
+.contact-globe .travelglobe {
+  width: 100%;
+}
+
+/* Its zoom buttons would sit off-screen at the top right, so they move to the bottom left */
+.contact-globe .travelglobe-controls {
+  top: auto;
+  right: auto;
+  bottom: 0.5rem;
+  left: 0.5rem;
+}
+
+.footer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 1rem 1.5rem;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-block: 130px 44px;
+  font: 500 12.5px/1.5 var(--f-mono);
+  color: var(--text-3);
 }
 
-.contact-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--color-text);
-  text-decoration: none;
-  font-size: 0.9375rem;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
-  transition: border-color 0.2s, color 0.2s;
+@media (max-width: 980px) {
+  .contact-talk,
+  .contact-text,
+  .contact-email-row,
+  .contact-links {
+    grid-column: 1 / 9;
+  }
+
+  .contact-globe {
+    top: -110px;
+    right: -48px;
+  }
 }
 
-.contact-link:hover {
-  color: #fff;
-  border-color: var(--color-border-muted);
-}
+/* Phones: the globe moves into the flow, under the links, so it can be spun without clipping */
+@media (max-width: 720px) {
+  .contact {
+    padding-top: 120px;
+  }
 
-.contact-link-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.125rem;
-  color: var(--color-text-muted);
-}
+  .contact-talk {
+    font-size: 19vw;
+  }
 
-.contact-link:hover .contact-link-icon {
-  color: var(--color-text);
-}
+  .contact-text {
+    font-size: 17px;
+  }
 
-.contact-link-label {
-  font-weight: 500;
-}
+  .contact-email {
+    font-size: min(30px, 6.6vw);
+  }
 
-/* Light theme: email, LinkedIn, GitHub links — grey so visible on white */
-body.theme-light .contact-link {
-  color: #525252;
-}
-body.theme-light .contact-link:hover {
-  color: #0a0a0a;
-  border-color: var(--color-border-muted);
-}
-body.theme-light .contact-link-icon {
-  color: #737373;
-}
-body.theme-light .contact-link:hover .contact-link-icon {
-  color: #0a0a0a;
+  .contact-globe {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: min(100%, 400px);
+    margin: 64px auto 0;
+    padding-inline: var(--gutter);
+  }
+
+  .footer {
+    padding-top: 80px;
+  }
 }

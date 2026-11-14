@@ -5,65 +5,54 @@ import { assetUrl } from "../utils/assetUrl.js";
 import "../styles/projects.css";
 
 const ALL = "All";
-const LAPTOP = "(min-width: 1024px)"; // 3 columns
-const TABLET = "(min-width: 640px)"; // 2 columns, else 1
+const NUMBER_WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
 
-const columnCount = () =>
-  window.matchMedia(LAPTOP).matches ? 3 : window.matchMedia(TABLET).matches ? 2 : 1;
-
-/** Number of tile columns for the current screen width; updates when the window is resized. */
-function useColumnCount() {
-  const [count, setCount] = useState(columnCount);
-  useEffect(() => {
-    const queries = [LAPTOP, TABLET].map((query) => window.matchMedia(query));
-    const update = () => setCount(columnCount());
-    queries.forEach((mq) => mq.addEventListener("change", update));
-    return () => queries.forEach((mq) => mq.removeEventListener("change", update));
-  }, []);
-  return count;
+/**
+ * Where each project sits. The first is large; the second sits beside it, lower down; the rest
+ * follow in pairs whose offsets alternate (a, then b), and a last unpaired project is centred.
+ * projects.css turns these names into columns and offsets for each screen width.
+ */
+function slotFor(index, count) {
+  if (index === 0) return "big";
+  if (index === 1) return "side";
+  const k = index - 2;
+  if (k % 2 === 0 && index === count - 1) return "solo";
+  const cycle = Math.floor(k / 2) % 2 === 0 ? "a" : "b";
+  return `${cycle}${(k % 2) + 1}`;
 }
 
 export default function Projects() {
   const [filter, setFilter] = useState(ALL);
   const [expandedImage, setExpandedImage] = useState(null);
-  const columns = useColumnCount();
 
   useEffect(() => {
-    const onEscape = (e) => {
-      if (e.key === "Escape") setExpandedImage(null);
-    };
-    if (expandedImage) {
-      document.addEventListener("keydown", onEscape);
-      document.body.style.overflow = "hidden";
-    }
+    if (!expandedImage) return;
+    const onEscape = (e) => e.key === "Escape" && setExpandedImage(null);
+    document.addEventListener("keydown", onEscape);
+    document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onEscape);
       document.body.style.overflow = "";
     };
   }, [expandedImage]);
 
-  const visible =
-    filter === ALL
-      ? myProjects
-      : myProjects.filter((project) => project.categories?.includes(filter));
-
-  // Masonry: deal the tiles out left to right (so the top row is the first projects in the list),
-  // and let each column stack its tiles at their own heights.
-  const stacks = Array.from({ length: columns }, (_, column) =>
-    visible.filter((_, i) => i % columns === column)
-  );
+  const visible = filter === ALL ? myProjects : myProjects.filter((project) => project.categories?.includes(filter));
+  const count = NUMBER_WORDS[myProjects.length] ?? myProjects.length;
 
   return (
-    <section className="projects-page">
-      <div className="projects-inner">
-        <div className="projects-header">
-          <h1 className="projects-title">Projects</h1>
-          <div className="projects-filters" role="group" aria-label="Filter projects">
+    <section className="projects" aria-labelledby="projects-title">
+      <div className="wrap grid12 projects-head">
+        <h2 className="h-section projects-title" id="projects-title">
+          Projects
+        </h2>
+        <div className="projects-side">
+          <p>{count} things I’ve built, from C++ systems code to an underwater gripper.</p>
+          <div className="projects-tabs" role="group" aria-label="Filter projects">
             {[ALL, ...projectCategories].map((category) => (
               <button
                 key={category}
                 type="button"
-                className="projects-filter"
+                className="projects-tab"
                 aria-pressed={filter === category}
                 onClick={() => setFilter(category)}
               >
@@ -72,44 +61,31 @@ export default function Projects() {
             ))}
           </div>
         </div>
+      </div>
 
-        <div className="projects-masonry">
-          {stacks.map((stack, column) => (
-            <div key={column} className="projects-column">
-              {stack.map((project) => (
-                <ProjectCard
-                  key={project.slug}
-                  project={project}
-                  onExpandImage={setExpandedImage}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+      <div className="wrap grid12 projects-list">
+        {visible.map((project, i) => (
+          <ProjectCard
+            key={project.slug}
+            project={project}
+            slot={slotFor(i, visible.length)}
+            onExpandImage={setExpandedImage}
+          />
+        ))}
       </div>
 
       {expandedImage && (
         <div
-          className="projects-image-lightbox"
+          className="lightbox"
           onClick={() => setExpandedImage(null)}
           role="dialog"
           aria-modal="true"
           aria-label="Expanded image"
         >
-          <button
-            type="button"
-            className="projects-lightbox-close"
-            onClick={() => setExpandedImage(null)}
-            aria-label="Close"
-          >
+          <button type="button" className="lightbox-close" onClick={() => setExpandedImage(null)} aria-label="Close">
             ×
           </button>
-          <img
-            src={assetUrl(expandedImage)}
-            alt=""
-            className="projects-lightbox-img"
-            onClick={(e) => e.stopPropagation()}
-          />
+          <img src={assetUrl(expandedImage)} alt="" className="lightbox-img" onClick={(e) => e.stopPropagation()} />
         </div>
       )}
     </section>

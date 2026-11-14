@@ -1,322 +1,315 @@
-/* Projects section: filter chips + compact tiles in a masonry of 3 / 2 / 1 columns
-   (the column count comes from Projects.jsx). Each tile carries all of a project's info. */
+/* Projects: one large project, one beside it lower down, then staggered pairs. No frames, no
+   chips: each project is a picture and text, separated from the next by space alone. */
 
-.projects-page {
-  padding-top: 5rem;
-  padding-bottom: 0rem;
+.projects {
+  padding-top: 160px;
 }
 
-/* Inside .page-content in App — full content width, no max-width */
-.projects-inner {
-  width: 100%;
-}
-
-.projects-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem 2rem;
-  margin-bottom: 1.75rem;
+.projects-head {
+  align-items: end;
+  margin-bottom: 72px;
 }
 
 .projects-title {
-  font-size: clamp(2rem, 4.5vw, 2.75rem);
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-  margin: 0;
+  grid-column: 1 / 8;
 }
 
-/* ── Filter chips ─────────────────────────────────────────────────────────── */
+.projects-side {
+  grid-column: 9 / 13;
+  display: grid;
+  gap: 16px;
+  padding-bottom: 10px;
+}
 
-.projects-filters {
+.projects-side p {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+.projects-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 4px 20px;
 }
 
-.projects-filter {
-  font: inherit;
-  font-size: 0.875rem;
-  line-height: 1;
-  padding: 0.55rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-border-muted);
-  background: transparent;
-  color: var(--color-text-muted);
+.projects-tab {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  font: 500 14px/1.4 var(--f-text);
+  color: var(--text-3);
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+  transition: color 0.15s ease;
 }
 
-.projects-filter:hover {
-  color: var(--color-text);
-  border-color: var(--color-text-muted);
+.projects-tab:hover {
+  color: var(--text);
 }
 
-.projects-filter[aria-pressed="true"] {
-  background: var(--color-text);
-  border-color: var(--color-text);
-  color: var(--color-bg);
+.projects-tab[aria-pressed="true"] {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
-.projects-filter:focus-visible {
-  outline: 2px solid var(--color-text-muted);
-  outline-offset: 2px;
-}
+/* ── One project ────────────────────────────────────────────────────────── */
 
-/* ── Masonry ──────────────────────────────────────────────────────────────── */
-
-.projects-masonry {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.25rem;
-}
-
-.projects-column {
-  flex: 1 1 0;
+.project {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
 }
 
-/* ── Tile ─────────────────────────────────────────────────────────────────── */
-
-.project-tile {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 0.65rem 0.65rem 0.75rem;
-  transition: border-color 0.2s;
-}
-
-.project-tile:hover {
-  border-color: var(--color-border-muted);
-}
-
-/* Every tile's media sits in the same short 16:9 frame; the full image opens in the lightbox. */
-.project-tile-media {
+.project-media {
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 10;
   padding: 0;
-  border: none;
-  border-radius: 9px;
   overflow: hidden;
-  background: var(--color-bg-elevated);
-  cursor: zoom-in;
+  border: 0;
+  border-radius: 4px;
+  background: var(--tone);
+  cursor: pointer;
 }
 
-.project-tile-media img {
+.project-media img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.35s ease;
+  transition: transform 0.45s ease;
 }
 
-button.project-tile-media:hover img {
-  transform: scale(1.02);
+.project-media:hover img {
+  transform: scale(1.025);
 }
 
-button.project-tile-media:focus-visible {
-  outline: 2px solid var(--color-text-muted);
-  outline-offset: 2px;
-}
-
-/* Videos: the thumbnail with a play button, then the player in the same frame once clicked. */
-.project-tile-media--video {
-  background: #000;
-  cursor: pointer;
-}
-
-.project-tile-media--video iframe,
-.project-tile-media--video video {
-  position: absolute;
-  inset: 0;
+.project-media iframe,
+.project-media video {
+  display: block;
   width: 100%;
   height: 100%;
   border: 0;
-  display: block;
-  object-fit: contain;
   background: #000;
 }
 
-.project-tile-play {
+.project-media--playing {
+  cursor: auto;
+}
+
+.project-play {
   position: absolute;
-  top: 50%;
   left: 50%;
-  width: 3.25rem;
-  height: 3.25rem;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
   border-radius: 50%;
-  background: rgba(10, 6, 7, 0.68);
-  color: #fff;
-  font-size: 1.05rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  background: var(--scrim);
+  color: var(--on-scrim);
+  font-size: 16px;
+  transition: transform 0.2s ease;
 }
 
-.project-tile-play svg {
-  margin-left: 3px; /* the triangle looks off-centre without this */
+.project-play svg {
+  margin-left: 3px;
 }
 
-.project-tile-media--video:hover .project-tile-play {
-  transform: translate(-50%, -50%) scale(1.08);
-  background: rgba(10, 6, 7, 0.86);
+.project-media:hover .project-play {
+  transform: scale(1.06);
 }
 
-.project-tile-title {
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--color-text);
-  margin: 0.75rem 0.2rem 0.35rem;
+.project-kicker {
+  margin: 20px 0 0;
+  font: 500 11.5px/1.5 var(--f-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pop);
 }
 
-.project-tile-title a {
-  color: inherit;
+.project-title {
+  margin: 8px 0 0;
+  font: 400 38px/1.02 var(--f-display);
+  letter-spacing: var(--ls-display);
+  color: var(--text);
 }
 
-.project-tile-desc {
-  font-size: 0.84rem;
-  line-height: 1.55;
-  color: var(--color-text-muted);
-  margin: 0 0.2rem 0.45rem;
+.project-sub {
+  margin: 8px 0 0;
+  font-size: 15.5px;
+  font-weight: 500;
+  color: var(--text);
 }
 
-.project-tile-subdesc {
-  font-size: 0.79rem;
-  line-height: 1.55;
-  color: var(--color-text-muted);
-  opacity: 0.82;
-  white-space: pre-line;
-  margin: 0 0.2rem 0.7rem;
+.project-desc {
+  max-width: 38em;
+  margin: 14px 0 0;
+  font-size: 15px;
+  line-height: 1.66;
+  color: var(--text-2);
 }
 
-.project-tile-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-  margin: 0 0.2rem;
-  padding-top: 0.7rem;
-  border-top: 1px solid var(--color-border-muted);
+.project-desc + .project-desc {
+  margin-top: 10px;
 }
 
-/* Two classes (0,2,0) beat the global `a:hover` (0,1,1) in index.css. */
-.project-tile-footer .project-tile-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  height: 1.55rem;
-  padding: 0 0.6rem;
-  border-radius: 7px;
-  background: var(--color-text);
-  color: var(--color-bg);
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1;
-  text-decoration: none;
-  transition: opacity 0.2s;
+.project-actions {
+  margin-top: 18px;
+  font-size: 14.5px;
+  gap: 10px 22px;
 }
 
-.project-tile-footer .project-tile-btn:hover,
-.project-tile-footer .project-tile-btn:focus-visible {
-  color: var(--color-bg);
-  text-decoration: none;
-  opacity: 0.82;
+.project-stack {
+  margin: 14px 0 0;
 }
 
-.project-tile-footer .project-tile-btn--icon {
-  width: 1.55rem;
-  padding: 0;
-  justify-content: center;
-  font-size: 0.68rem;
+/* The large one */
+.project--big .project-title {
+  font-size: clamp(46px, 4.6vw, 68px);
 }
 
-.project-tile-tag {
-  display: inline-flex;
-  align-items: center;
-  height: 1.55rem;
-  padding: 0 0.5rem;
-  border-radius: 7px;
-  border: 1px solid var(--color-border-muted);
-  color: var(--color-text-muted);
-  font-size: 0.7rem;
-  line-height: 1;
+.project--big .project-desc {
+  font-size: 16.5px;
 }
 
-/* Visually hidden, read by screen readers ("Code for NavBot …"). */
-.project-tile-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+/* ── Placement (laptop): columns and offsets per slot ───────────────────── */
+
+.project--big {
+  grid-column: 1 / 8;
 }
 
-/* ── Lightbox: enlarge an image ───────────────────────────────────────────── */
+.project--side {
+  grid-column: 9 / 13;
+  margin-top: 104px;
+}
 
-.projects-image-lightbox {
+.project--a1 {
+  grid-column: 2 / 7;
+  margin-top: 136px;
+}
+
+.project--a2 {
+  grid-column: 8 / 12;
+  margin-top: 240px;
+}
+
+.project--b1 {
+  grid-column: 1 / 6;
+  margin-top: 136px;
+}
+
+.project--b2 {
+  grid-column: 8 / 13;
+  margin-top: 64px;
+}
+
+.project--solo {
+  grid-column: 4 / 10;
+  margin-top: 136px;
+}
+
+/* Tablet: the large one takes the full width, the rest pair up left and right */
+@media (max-width: 980px) {
+  .projects-title {
+    grid-column: 1 / 7;
+  }
+
+  .projects-side {
+    grid-column: 7 / 13;
+  }
+
+  .project--big {
+    grid-column: 1 / 13;
+  }
+
+  .project--side,
+  .project--a2,
+  .project--b2 {
+    grid-column: 1 / 7;
+    margin-top: 80px;
+  }
+
+  .project--a1,
+  .project--b1,
+  .project--solo {
+    grid-column: 7 / 13;
+    margin-top: 160px;
+  }
+}
+
+/* Phone: one column, alternately indented */
+@media (max-width: 640px) {
+  .projects {
+    padding-top: 112px;
+  }
+
+  .projects-head {
+    margin-bottom: 44px;
+  }
+
+  .projects-side {
+    margin-top: 20px;
+    padding-bottom: 0;
+  }
+
+  .project.project {
+    margin-top: 72px;
+  }
+
+  .project.project--big {
+    margin-top: 0;
+  }
+
+  .project--side,
+  .project--a2,
+  .project--b2 {
+    margin-left: 10%;
+  }
+
+  .project-title {
+    font-size: 34px;
+  }
+}
+
+/* ── Enlarged image ─────────────────────────────────────────────────────── */
+
+.lightbox {
   position: fixed;
   inset: 0;
-  z-index: 1000;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 4vmin;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   cursor: zoom-out;
 }
 
-.projects-lightbox-close {
+.lightbox-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+  cursor: auto;
+}
+
+.lightbox-close {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 2.5rem;
-  height: 2.5rem;
-  border: none;
+  top: 16px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-  font-size: 1.5rem;
+  background: var(--tone);
+  color: var(--text);
+  font-size: 26px;
   line-height: 1;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.projects-lightbox-close:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.projects-lightbox-img {
-  max-width: min(94vw, 1600px);
-  max-height: 90vh;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  cursor: default;
-  border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .project-tile,
-  .project-tile-media img,
-  .project-tile-play {
-    transition: none;
-  }
 }

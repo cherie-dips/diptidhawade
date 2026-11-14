@@ -7,6 +7,9 @@ export const navLinks = [
 // CV PDF: place your cv.pdf in public/assets/cv.pdf
 export const cvPdfUrl = '/assets/cv.pdf';
 
+// Line above the name in the intro, next to a green dot. Edit or empty it as plans change.
+export const heroStatus = 'Open to software and AI roles';
+
 // ─── Hero ─────────────────────────────────────────────────────────────────
 export const heroContent = {
   title: 'Dipti Dhawade',
@@ -198,6 +201,8 @@ export const projectCategories = ['Systems', 'Full-stack', 'AI / ML', 'Robotics'
 // `texture` is a video file. `thumbnail` is the image shown on the tile (falls back to `spotlight`
 // when that is an image, or the YouTube cover when it is a video). The tile crops it to 16:9;
 // `thumbPosition` picks which part stays in view for images of another shape.
+// Shown in this order. The first project (of the current filter) gets the large spot; `award`
+// appears in small caps above the title; `websiteLabel` names the `website` link (default "Live").
 export const myProjects = [
   {
     title: 'NavBot — Chatbot for Any Website',
@@ -208,6 +213,7 @@ export const myProjects = [
       'An agentic RAG pipeline plans each question with Gemini, runs multi-query search over Pinecone, reranks results with a cross-encoder, and checks the live site when the index falls short. Owners get a dashboard with analytics, editable FAQs, and widget theming.',
     href: 'https://github.com/cherie-dips/NavBot',
     website: 'https://navbot-web.onrender.com/',
+    websiteLabel: 'Try it live',
     spotlight: 'https://www.youtube.com/watch?v=dQ3EHuyKFAg',
     thumbnail: '/assets/projects/navbot.jpg', // the YouTube cover with its black side bars cropped off
     tags: [
@@ -234,31 +240,37 @@ export const myProjects = [
     ],
   },
   {
-    title: 'Grippers for Underwater Manipulation',
-    slug: 'underwater-grippers',
-    categories: ['Robotics'],
-    desc: 'Designed and prototyped a general-purpose underwater gripper capable of grasping spherical, rigid, delicate, and slippery objects — addressing key challenges like water drag, surface slippage, and buoyancy.',
+    title: 'ConcurrentFS — Crash-Safe File System in C++',
+    slug: 'concurrentfs',
+    categories: ['Systems'],
+    desc: 'A file system written from scratch in C++17 that lives inside one ordinary file, with its own inodes, free-space bitmaps, directories, block cache and write-ahead log. Many threads can use it at once, and it survives being killed in the middle of a write.',
     subdesc:
-      'Uses the fin-ray effect (inspired by ray-finned fish bone structure) for passive, load-distributing grasps. Designed and 3D printed in TPU/SLA, exploring worm-follower and rack-and-pinion actuation mechanisms for improved range and precision.\n🏆 3rd Place — SP Dutt Award For Innovation and Impact',
-    href: 'https://github.com/cherie-dips/gripping-underwater',
-    spotlight: 'https://www.youtube.com/watch?v=HWLXG5a1gso',
-    thumbnail: 'https://i.ytimg.com/vi/HWLXG5a1gso/maxresdefault.jpg',
-    website: 'https://cherie-dips.github.io/gripping-underwater/',
+      'Built stage by stage from OSTEP: per-inode reader/writer locks with hand-over-hand path lookup, a sharded LRU block cache, and redo-only crash recovery with group commit. Killed at 500 points in crash tests with fsck clean every time, and 16 concurrent threads run with zero ThreadSanitizer reports.',
+    href: 'https://github.com/cherie-dips/FileSystem',
+    website: 'https://cherie-dips.github.io/FileSystem/',
+    websiteLabel: 'Docs',
+    spotlight: '/assets/projects/ConcurrentFS.png',
+    thumbnail: '/assets/projects/ConcurrentFS-1600.png',
     tags: [
       {
         id: 1,
-        name: '3D Design',
+        name: 'C++17',
         path: '/assets/react.svg',
       },
       {
         id: 2,
-        name: 'Soft Robotics',
+        name: 'Concurrency',
         path: 'assets/tailwindcss.png',
       },
       {
         id: 3,
-        name: 'Electronics',
+        name: 'Write-Ahead Log',
         path: '/assets/typescript.png',
+      },
+      {
+        id: 4,
+        name: 'Crash Recovery',
+        path: '/assets/framer.png',
       },
     ],
   },
@@ -296,36 +308,56 @@ export const myProjects = [
     ],
   },
   {
-    title: 'ConcurrentFS — Crash-Safe File System in C++',
-    slug: 'concurrentfs',
-    categories: ['Systems'],
-    desc: 'A file system written from scratch in C++17 that lives inside one ordinary file, with its own inodes, free-space bitmaps, directories, block cache and write-ahead log. Many threads can use it at once, and it survives being killed in the middle of a write.',
+    title: 'Grippers for Underwater Manipulation',
+    slug: 'underwater-grippers',
+    categories: ['Robotics'],
+    desc: 'Designed and prototyped a general-purpose underwater gripper capable of grasping spherical, rigid, delicate, and slippery objects — addressing key challenges like water drag, surface slippage, and buoyancy.',
     subdesc:
-      'Built stage by stage from OSTEP: per-inode reader/writer locks with hand-over-hand path lookup, a sharded LRU block cache, and redo-only crash recovery with group commit. Killed at 500 points in crash tests with fsck clean every time, and 16 concurrent threads run with zero ThreadSanitizer reports.',
-    href: 'https://github.com/cherie-dips/FileSystem',
-    website: 'https://cherie-dips.github.io/FileSystem/',
-    spotlight: '/assets/projects/ConcurrentFS.png',
-    thumbnail: '/assets/projects/ConcurrentFS-1600.png',
+      'Uses the fin-ray effect (inspired by ray-finned fish bone structure) for passive, load-distributing grasps. Designed and 3D printed in TPU/SLA, exploring worm-follower and rack-and-pinion actuation mechanisms for improved range and precision.',
+    award: '3rd place, SP Dutt Award for Innovation and Impact',
+    href: 'https://github.com/cherie-dips/gripping-underwater',
+    spotlight: 'https://www.youtube.com/watch?v=HWLXG5a1gso',
+    thumbnail: 'https://i.ytimg.com/vi/HWLXG5a1gso/maxresdefault.jpg',
+    website: 'https://cherie-dips.github.io/gripping-underwater/',
+    websiteLabel: 'Project site',
     tags: [
       {
         id: 1,
-        name: 'C++17',
+        name: '3D Design',
         path: '/assets/react.svg',
       },
       {
         id: 2,
-        name: 'Concurrency',
+        name: 'Soft Robotics',
         path: 'assets/tailwindcss.png',
       },
       {
         id: 3,
-        name: 'Write-Ahead Log',
+        name: 'Electronics',
         path: '/assets/typescript.png',
       },
+    ],
+  },
+  {
+    title: 'Mobile-Hi-SAM — Lightweight Text Segmentation',
+    slug: 'mobile-hi-sam',
+    categories: ['AI / ML'],
+    desc: 'A parameter-efficient hierarchical text segmentation model designed for edge deployment. Integrates MobileSAM\'s TinyViT encoder and Hi-SAM pipeline with a custom hierarchical decoder for word, line, and paragraph segmentation on the HierText dataset.',
+    subdesc:
+      'Achieved ~62% of Hi-SAM\'s Panoptic Quality (PQ) using only 12.6M parameters — an ≈98% reduction in model size — making it viable for on-device inference. Built with Python and PyTorch under Prof. Anupam Sobti.',
+    href: 'https://github.com/cherie-dips/DL_Project',
+    texture: '/assets/projects/mobile-hi-sam.mp4',
+    thumbnail: '/assets/projects/mobile-hi-sam.png',
+    tags: [
       {
-        id: 4,
-        name: 'Crash Recovery',
-        path: '/assets/framer.png',
+        id: 1,
+        name: 'Python',
+        path: '/assets/react.svg',
+      },
+      {
+        id: 2,
+        name: 'PyTorch',
+        path: 'assets/tailwindcss.png',
       },
     ],
   },
@@ -359,29 +391,6 @@ export const myProjects = [
         id: 4,
         name: 'MongoDB',
         path: '/assets/framer.png',
-      },
-    ],
-  },
-  {
-    title: 'Mobile-Hi-SAM — Lightweight Text Segmentation',
-    slug: 'mobile-hi-sam',
-    categories: ['AI / ML'],
-    desc: 'A parameter-efficient hierarchical text segmentation model designed for edge deployment. Integrates MobileSAM\'s TinyViT encoder and Hi-SAM pipeline with a custom hierarchical decoder for word, line, and paragraph segmentation on the HierText dataset.',
-    subdesc:
-      'Achieved ~62% of Hi-SAM\'s Panoptic Quality (PQ) using only 12.6M parameters — an ≈98% reduction in model size — making it viable for on-device inference. Built with Python and PyTorch under Prof. Anupam Sobti.',
-    href: 'https://github.com/cherie-dips/DL_Project',
-    texture: '/assets/projects/mobile-hi-sam.mp4',
-    thumbnail: '/assets/projects/mobile-hi-sam.png',
-    tags: [
-      {
-        id: 1,
-        name: 'Python',
-        path: '/assets/react.svg',
-      },
-      {
-        id: 2,
-        name: 'PyTorch',
-        path: 'assets/tailwindcss.png',
       },
     ],
   },
