@@ -24,3 +24,11 @@ export function getYoutubeEmbedSrc(url) {
   }
   return null;
 }
+
+/** Cover image of a YouTube video (hqdefault exists for every video), or null. */
+export function getYoutubeThumbnail(url) {
+  const embed = getYoutubeEmbedSrc(url);
+  if (!embed) return null;
+  const id = new URL(embed).pathname.split("/").filter(Boolean).pop();
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
+}

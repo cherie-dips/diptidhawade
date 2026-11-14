@@ -1,12 +1,32 @@
-import { useState, useEffect } from "react";
-import { FaGithub, FaGlobe } from "react-icons/fa";
-import { myProjects } from "../constants/index.js";
+import { useEffect, useState } from "react";
+import ProjectCard from "../components/ProjectCard.jsx";
+import { myProjects, projectCategories } from "../constants/index.js";
 import { assetUrl } from "../utils/assetUrl.js";
-import { getYoutubeEmbedSrc } from "../utils/youtubeEmbed.js";
 import "../styles/projects.css";
 
+const ALL = "All";
+const LAPTOP = "(min-width: 1024px)"; // 3 columns
+const TABLET = "(min-width: 640px)"; // 2 columns, else 1
+
+const columnCount = () =>
+  window.matchMedia(LAPTOP).matches ? 3 : window.matchMedia(TABLET).matches ? 2 : 1;
+
+/** Number of tile columns for the current screen width; updates when the window is resized. */
+function useColumnCount() {
+  const [count, setCount] = useState(columnCount);
+  useEffect(() => {
+    const queries = [LAPTOP, TABLET].map((query) => window.matchMedia(query));
+    const update = () => setCount(columnCount());
+    queries.forEach((mq) => mq.addEventListener("change", update));
+    return () => queries.forEach((mq) => mq.removeEventListener("change", update));
+  }, []);
+  return count;
+}
+
 export default function Projects() {
+  const [filter, setFilter] = useState(ALL);
   const [expandedImage, setExpandedImage] = useState(null);
+  const columns = useColumnCount();
 
   useEffect(() => {
     const onEscape = (e) => {
@@ -22,101 +42,50 @@ export default function Projects() {
     };
   }, [expandedImage]);
 
+  const visible =
+    filter === ALL
+      ? myProjects
+      : myProjects.filter((project) => project.categories?.includes(filter));
+
+  // Masonry: deal the tiles out left to right (so the top row is the first projects in the list),
+  // and let each column stack its tiles at their own heights.
+  const stacks = Array.from({ length: columns }, (_, column) =>
+    visible.filter((_, i) => i % columns === column)
+  );
+
   return (
     <section className="projects-page">
       <div className="projects-inner">
-        <h1 className="projects-title">Projects</h1>
-
-        {myProjects.map((project, i) => {
-          const youtubeEmbed =
-            !project.texture && getYoutubeEmbedSrc(project.spotlight);
-          const primaryHref = project.website || project.href;
-          return (
-          <div key={i} className="projects-item">
-            <div className="projects-item-media-card">
-              {project.texture ? (
-                <video
-                  src={assetUrl(project.texture)}
-                  poster={project.thumbnail ? assetUrl(project.thumbnail) : undefined}
-                  controls
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                />
-              ) : youtubeEmbed ? (
-                <div className="projects-youtube-wrap">
-                  <iframe
-                    className="projects-youtube-iframe"
-                    src={youtubeEmbed}
-                    title={`${project.title} — project video`}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  className="projects-item-image-btn"
-                  onClick={() => setExpandedImage(project.spotlight)}
-                  aria-label="Expand image"
-                >
-                  <img
-                    src={assetUrl(project.spotlight)}
-                    alt=""
-                    loading="lazy"
-                  />
-                </button>
-              )}
-            </div>
-            <div className="projects-item-body">
-              <h3 className="projects-item-title">
-                <a href={primaryHref} target="_blank" rel="noopener noreferrer">
-                  {project.title}
-                </a>
-              </h3>
-              <p className="projects-item-desc">{project.desc}</p>
-              {project.subdesc && (
-                <p className="projects-item-subdesc">{project.subdesc}</p>
-              )}
-              {project.tags?.length > 0 && (
-                <div className="projects-item-tags">
-                  {project.tags.map((tag) => (
-                    <span key={tag.id} className="projects-item-tag">
-                      {tag.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-              
-              <div className="projects-item-links">
-                <a
-                  href={project.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="projects-item-icon-link"
-                  aria-label={`${project.title} on GitHub`}
-                  title="View source on GitHub"
-                >
-                  <FaGithub aria-hidden />
-                </a>
-                {project.website && (
-                  <a
-                    href={project.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="projects-item-icon-link"
-                    aria-label={`${project.title} website`}
-                    title="Visit website"
-                  >
-                    <FaGlobe aria-hidden />
-                  </a>
-                )}
-              </div>
-            </div>
+        <div className="projects-header">
+          <h1 className="projects-title">Projects</h1>
+          <div className="projects-filters" role="group" aria-label="Filter projects">
+            {[ALL, ...projectCategories].map((category) => (
+              <button
+                key={category}
+                type="button"
+                className="projects-filter"
+                aria-pressed={filter === category}
+                onClick={() => setFilter(category)}
+              >
+                {category}
+              </button>
+            ))}
           </div>
-          );
-        })}
+        </div>
+
+        <div className="projects-masonry">
+          {stacks.map((stack, column) => (
+            <div key={column} className="projects-column">
+              {stack.map((project) => (
+                <ProjectCard
+                  key={project.slug}
+                  project={project}
+                  onExpandImage={setExpandedImage}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
 
       {expandedImage && (
@@ -125,7 +94,7 @@ export default function Projects() {
           onClick={() => setExpandedImage(null)}
           role="dialog"
           aria-modal="true"
-          aria-label="Expand image"
+          aria-label="Expanded image"
         >
           <button
             type="button"
