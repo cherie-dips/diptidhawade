@@ -4,8 +4,17 @@
     <meta charset="UTF-8" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet" />
+    <!-- Light is the default. A saved choice (only written when the visitor clicks the theme button)
+         is applied here, before the first paint, so dark-mode visitors never see a light flash. -->
+    <script>
+      try {
+        localStorage.removeItem("dipti-profile-theme"); // old key: it saved "dark" for every visitor
+        if (localStorage.getItem("dd-theme") === "dark") document.documentElement.dataset.theme = "dark";
+      } catch (e) {}
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Dipti Dhawade, Computer Science & AI student at Plaksha University. Projects in AI products, systems and robotics." />
     <title>Dipti Dhawade</title>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-C8NL8E03VQ"></script>
@@ -16,8 +25,8 @@
 
       gtag('config', 'G-C8NL8E03VQ');
     </script>
-    <script type="module" crossorigin src="/diptidhawade/assets/index-Bm5xgcl-.js"></script>
-    <link rel="stylesheet" crossorigin href="/diptidhawade/assets/index-CSgqwcOn.css">
+    <script type="module" crossorigin src="/diptidhawade/assets/index-CCvNrZi9.js"></script>
+    <link rel="stylesheet" crossorigin href="/diptidhawade/assets/index-BlYTwSM1.css">
   </head>
   <body>
     <div id="root"></div>
@@ -26,16 +35,16 @@
         apiBase: "https://navbot-api.onrender.com",
         siteId: "cherie-dips.github.io",
         theme: {
-          "primary": "#0a0a0a",
-          "launcherBg": "#0a0a0a",
+          "primary": "#222222",
+          "launcherBg": "#222222",
           "botBubbleBg": "rgba(255,255,255,0.4)",
           "userBubbleBg": "rgba(0,0,0,0.06)",
-          "headerTextColor": "#0a0a0a",
-          "timestampColor": "#94a3b8",
-          "iconColor": "#94a3b8",
-          "sendBtnBg": "#0a0a0a",
-          "sendBtnColor": "#ffffff",
-          "fontFamily": "Merriweather, Georgia, serif",
+          "headerTextColor": "#222222",
+          "timestampColor": "#7a7268",
+          "iconColor": "#7a7268",
+          "sendBtnBg": "#ff3d81",
+          "sendBtnColor": "#1a1a1a",
+          "fontFamily": "Geist, system-ui, sans-serif",
           "widgetOpacity": 0.45
         }
       };
