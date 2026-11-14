@@ -90,7 +90,7 @@
 .hero-intro-col {
   grid-column: 5 / 11;
   grid-row: 4;
-  margin-top: 56px;
+  margin-top: 80px;
 }
 
 .hero-intro {
@@ -111,7 +111,7 @@
   grid-row: 4;
   display: grid;
   gap: 22px;
-  margin: 64px 0 0;
+  margin: 88px 0 0;
 }
 
 .hero-facts dd {

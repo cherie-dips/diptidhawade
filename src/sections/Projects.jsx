@@ -5,7 +5,6 @@ import { assetUrl } from "../utils/assetUrl.js";
 import "../styles/projects.css";
 
 const ALL = "All";
-const NUMBER_WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
 
 /**
  * Where each project sits. The first is large; the second sits beside it, lower down; the rest
@@ -37,7 +36,6 @@ export default function Projects() {
   }, [expandedImage]);
 
   const visible = filter === ALL ? myProjects : myProjects.filter((project) => project.categories?.includes(filter));
-  const count = NUMBER_WORDS[myProjects.length] ?? myProjects.length;
 
   return (
     <section className="projects" aria-labelledby="projects-title">
@@ -46,7 +44,6 @@ export default function Projects() {
           Projects
         </h2>
         <div className="projects-side">
-          <p>{count} things I’ve built, from C++ systems code to an underwater gripper.</p>
           <div className="projects-tabs" role="group" aria-label="Filter projects">
             {[ALL, ...projectCategories].map((category) => (
               <button

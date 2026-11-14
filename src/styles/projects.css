@@ -21,13 +21,6 @@
   padding-bottom: 10px;
 }
 
-.projects-side p {
-  margin: 0;
-  font-size: 15.5px;
-  line-height: 1.55;
-  color: var(--text-2);
-}
-
 .projects-tabs {
   display: flex;
   flex-wrap: wrap;
