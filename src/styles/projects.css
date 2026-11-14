@@ -59,7 +59,6 @@
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
   padding: 0;
   overflow: hidden;
   border: 0;
@@ -68,11 +67,12 @@
   cursor: pointer;
 }
 
+/* The box has the picture's shape (set from ProjectCard), so contain shows it whole */
 .project-media img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.45s ease;
 }
 
@@ -271,13 +271,14 @@
 
 /* ── Enlarged image ─────────────────────────────────────────────────────── */
 
+/* Fits inside the screen: room at the top for the close button, a margin everywhere else */
 .lightbox {
   position: fixed;
   inset: 0;
   z-index: 100;
   display: grid;
   place-items: center;
-  padding: 4vmin;
+  padding: 72px 4vmin 4vmin;
   background: color-mix(in srgb, var(--bg) 92%, transparent);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
@@ -285,8 +286,11 @@
 }
 
 .lightbox-img {
-  max-width: 100%;
-  max-height: 100%;
+  width: auto;
+  height: auto;
+  max-width: calc(100vw - 8vmin);
+  max-height: calc(100vh - 72px - 4vmin);
+  max-height: calc(100dvh - 72px - 4vmin);
   object-fit: contain;
   border-radius: 4px;
   cursor: auto;

@@ -8,18 +8,21 @@ const YOUTUBE_ALLOW =
   "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
 
 /**
- * The project's picture. Images enlarge on click. Videos show their thumbnail with a play button and
- * only load the player (YouTube or the video file) when clicked, so the page stays light.
+ * The project's picture, shown whole: the box takes the picture's own shape once it loads, so
+ * nothing is cropped. Images enlarge on click. Videos show their thumbnail with a play button and
+ * only load the player (YouTube or the video file) when clicked, in a box of the same shape.
  */
 function ProjectMedia({ project, name, onExpandImage }) {
   const [playing, setPlaying] = useState(false);
+  const [ratio, setRatio] = useState(null); // width / height of the thumbnail, once loaded
   const image = cardImage(project);
   const isVideo = hasVideo(project);
+  const shape = { aspectRatio: ratio ?? (isVideo ? 16 / 9 : 16 / 10) };
 
   if (isVideo && (playing || !image)) {
     const youtube = getYoutubeEmbedSrc(project.spotlight);
     return (
-      <div className="project-media project-media--playing">
+      <div className="project-media project-media--playing" style={shape}>
         {project.texture ? (
           <video
             src={assetUrl(project.texture)}
@@ -49,6 +52,7 @@ function ProjectMedia({ project, name, onExpandImage }) {
     <button
       type="button"
       className="project-media"
+      style={shape}
       onClick={() => (isVideo ? setPlaying(true) : onExpandImage(project.spotlight || image))}
       aria-label={isVideo ? `Play the ${name} video` : `Enlarge the ${name} image`}
     >
@@ -56,7 +60,7 @@ function ProjectMedia({ project, name, onExpandImage }) {
         src={assetUrl(image)}
         alt=""
         loading="lazy"
-        style={project.thumbPosition ? { objectPosition: project.thumbPosition } : undefined}
+        onLoad={(e) => setRatio(e.currentTarget.naturalWidth / e.currentTarget.naturalHeight)}
       />
       {isVideo && (
         <span className="project-play" aria-hidden>

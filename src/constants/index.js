@@ -199,8 +199,8 @@ export const projectCategories = ['Systems', 'Full-stack', 'AI / ML', 'Robotics'
 
 // `slug` identifies the tile. `spotlight` is the media (an image you can enlarge, or a YouTube link);
 // `texture` is a video file. `thumbnail` is the image shown on the tile (falls back to `spotlight`
-// when that is an image, or the YouTube cover when it is a video). The tile crops it to 16:9;
-// `thumbPosition` picks which part stays in view for images of another shape.
+// when that is an image, or the YouTube cover when it is a video). It is shown whole, in a box of
+// its own shape; crop black bars out of video covers (see navbot.jpg) before using them.
 // Shown in this order. The first project (of the current filter) gets the large spot; `award`
 // appears in small caps above the title; `websiteLabel` names the `website` link (default "Live").
 export const myProjects = [
@@ -398,7 +398,6 @@ export const myProjects = [
     title: 'Chronic Wound Status Assessment using AI',
     slug: 'chronic-wound',
     categories: ['AI / ML'],
-    thumbPosition: 'center top',
     desc: 'An AI-based chronic wound monitoring system that uses microscopic images of pH-sensitive hydrogels to enable real-time, non-invasive pH estimation for chronic wound assessment.',
     subdesc:
       'Developed under Prof. Siddharth and Prof. Rucha Joshi, the pipeline implements ResNet-18 feature extraction combined with Random Forest classification to ensure robustness against imaging variability — enabling accessible, label-free wound diagnostics.',
