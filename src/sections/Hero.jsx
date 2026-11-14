@@ -80,11 +80,14 @@ export default function Hero() {
         <dl className="hero-facts">
           <div>
             <dt className="label">Now</dt>
-            <dd>Building ConcurrentFS in C++17</dd>
+            <dd className="hero-fact-nowrap">Building Mini-Borg in C++</dd>
           </div>
           <div>
             <dt className="label">Focus</dt>
-            <dd>Operating systems, networks, backend, applied AI</dd>
+            <dd>
+              <span className="hero-focus-line">OS, Networks, DSA</span>{" "}
+              <span className="hero-focus-line">ML &amp; AI, Backend</span>
+            </dd>
           </div>
           <div>
             <dt className="label">Also on</dt>
