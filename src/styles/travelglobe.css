@@ -1,8 +1,8 @@
 /* Travel globe — colours are read by Travelglobe.jsx, so the WebGL scene follows the theme */
 
 .travelglobe {
-  --globe-sphere: #e3ddd3;
-  --globe-rim: #b3a99b;
+  --globe-sphere: #f7f3eb;
+  --globe-rim: #c6bba9;
   --globe-land: #222222;
   --globe-land-opacity: 0.5;
   --globe-pin: #e0296b;

@@ -1,20 +1,20 @@
 /**
  * Theme, type and the shared building blocks of the page.
  *
- * Palette "Mushroom": light is the default; html[data-theme="dark"] switches to charcoal. The theme
+ * Palette "Mushroom" on warm cream: light is the default; html[data-theme="dark"] switches to charcoal. The theme
  * is set before first paint by a script in index.html and changed by the button in the navbar.
  * No borders anywhere: sections are separated by space, one tonal band and large headings.
  */
 
 :root {
-  --bg: #d6cfc4;
-  --tone: #cac2b5; /* the Experience band and the block behind the photo */
+  --bg: #eee7da;
+  --tone: #e2d9c8; /* the Experience band and the block behind the photo */
   --text: #222222;
   --text-2: #45403a;
   --text-3: #514b44;
   --accent: #ff3d81; /* the filled Résumé button */
   --on-accent: #1a1a1a;
-  --pop: #a8124e; /* small pink text: hot pink is too light to read at 12px on mushroom */
+  --pop: #a8124e; /* small pink text: hot pink is too light to read at 12px on cream */
   --mark: #ff3d81; /* highlighter behind key links */
   --line: #ff3d81; /* link underlines */
   --ok: #2f7a4b;
