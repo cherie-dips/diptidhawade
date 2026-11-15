@@ -12,8 +12,6 @@ function shortDuration(duration) {
     : `${mon(fromMonth)} ${fromYear} – ${mon(toMonth)} ${toYear}`;
 }
 
-const firstYear = Math.min(...experiences.map((exp) => Number(exp.duration.match(/\d{4}/)?.[0] ?? Infinity)));
-
 /** The one tonal band on the page: dates on the left, every other entry indented. */
 export default function Experience() {
   return (
@@ -22,7 +20,6 @@ export default function Experience() {
         <h2 className="h-section experience-title" id="experience-title">
           Experience
         </h2>
-        {Number.isFinite(firstYear) && <p className="experience-note">Research and university roles since {firstYear}.</p>}
 
         <ol className="experience-list">
           {experiences.map((exp) => (
